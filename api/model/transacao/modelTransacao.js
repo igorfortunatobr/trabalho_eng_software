@@ -14,6 +14,9 @@ const Transacao = sequelize.define('Transacao', {
     type: DataTypes.DOUBLE,
     allowNull: false
   }
+}, 
+{
+    tableName: 'transacao'
 });
 
 module.exports = Transacao;

@@ -17,8 +17,8 @@ app.use('/transacoes', transacaoRoutes);
 // Sincronização do modelo com o banco de dados e inicialização do servidor
 sequelize.sync()
   .then(() => {
-    app.listen(3000, () => {
-      console.log('Servidor rodando em http://localhost:3000');
+    app.listen(3001, () => {
+      console.log('Servidor rodando em http://localhost:3001');
     });
   })
   .catch(err => console.error('Erro ao sincronizar com o banco de dados:', err));

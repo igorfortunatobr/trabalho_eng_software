@@ -6,6 +6,9 @@ const CategoriaTransacao = sequelize.define('CategoriaTransacao', {
     type: DataTypes.DOUBLE,
     allowNull: false
   }
+}, 
+{
+    tableName: 'categoriatransacao'
 });
 
 module.exports = CategoriaTransacao;
