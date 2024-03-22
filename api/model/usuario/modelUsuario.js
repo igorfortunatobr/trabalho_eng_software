@@ -1,9 +1,19 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../../../database/database');
 
+const Usuario = sequelize.define('Usuario', {
+  nome: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  senha: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+});
 
-let User = 
-{
-    insert: function(DATA, callback)
-    {
-        
-    }
-}
+module.exports = Usuario;
