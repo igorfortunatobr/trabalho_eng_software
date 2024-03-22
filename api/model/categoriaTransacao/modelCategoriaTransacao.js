@@ -8,7 +8,8 @@ const CategoriaTransacao = sequelize.define('CategoriaTransacao', {
   }
 }, 
 {
-    tableName: 'categoriatransacao'
+    tableName: 'categoriatransacao',
+    timestamps: true // Adicionando os campos createdAt e updatedAt
 });
 
 module.exports = CategoriaTransacao;

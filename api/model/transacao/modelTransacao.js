@@ -16,7 +16,8 @@ const Transacao = sequelize.define('Transacao', {
   }
 }, 
 {
-    tableName: 'transacao'
+    tableName: 'transacao',
+    timestamps: true // Adicionando os campos createdAt e updatedAt
 });
 
 module.exports = Transacao;
