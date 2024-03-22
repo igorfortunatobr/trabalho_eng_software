@@ -6,6 +6,7 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   try {
     const usuario = await Usuario.create(req.body);
+    delete usuario.dataValues.senha;
     res.status(201).json(usuario);
   } catch (error) {
     console.error(error);
@@ -15,7 +16,9 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const usuarios = await Usuario.findAll();
+    const usuarios = await Usuario.findAll({
+        attributes: { exclude: ['senha'] }
+      });
     res.json(usuarios);
   } catch (error) {
     console.error(error);
