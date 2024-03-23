@@ -4,13 +4,26 @@ const sequelize = require('./database/database');
 const usuarioRoutes = require('./api/routes/usuarioRoutes');
 const categoriaRoutes = require('./api/routes/categoriaRoutes');
 const transacaoRoutes = require('./api/routes/transacaoRoutes');
+const authRoutes = require('./api/routes/auth/authRoutes');
+const { verificarToken } = require('./api/middleware/authMiddleware');
+
 //const categoriaTransacaoRoutes = require('./api/routes/categoriaTransacaoRoutes');
 
 const app = express();
 app.use(express.json());
 
-// Rotas
+// Middleware para analisar corpos de solicitação JSON
+app.use(express.json());
+
 app.use('/usuarios', usuarioRoutes);
+
+// Rotas de autenticação
+app.use('/auth', authRoutes);
+
+// Middleware para verificar token JWT em todas as rotas
+app.use(verificarToken);
+
+// Rotas
 app.use('/categorias', categoriaRoutes);
 app.use('/transacoes', transacaoRoutes);
 //app.use('/categoria-transacoes', categoriaTransacaoRoutes);
