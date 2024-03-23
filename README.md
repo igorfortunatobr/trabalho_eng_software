@@ -1,1 +1,9 @@
-# trabalho_eng_software
+# Como configurar o App.
+
+Alterar o arquivo .env
+```
+DATABASE=NOME_BANCO
+USERNAME=NOME_USUARIO
+PASSWORD=NOME_SENHA
+SECRET_KEY=CHAVECRIPTOGRAFIA
+```
