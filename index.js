@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const sequelize = require('./database/database');
 const usuarioRoutes = require('./api/routes/usuarioRoutes');
@@ -17,8 +18,8 @@ app.use('/transacoes', transacaoRoutes);
 // Sincronização do modelo com o banco de dados e inicialização do servidor
 sequelize.sync()
   .then(() => {
-    app.listen(3001, () => {
-      console.log('Servidor rodando em http://localhost:3001');
+    app.listen(process.env.PORT_NODE, () => {
+      console.log('Servidor rodando em http://localhost:' + process.env.PORT_NODE);
     });
   })
   .catch(err => console.error('Erro ao sincronizar com o banco de dados:', err));
