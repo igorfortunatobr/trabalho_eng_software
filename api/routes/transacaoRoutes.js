@@ -95,7 +95,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Exclusão de transação
-router.delete('/:id', authenticateToken, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const { id: userId } = req.userId; // ID do usuário autenticado
     const { id: transacaoId } = req.params;
