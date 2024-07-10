@@ -54,7 +54,7 @@ router.put('/:id', async (req, res) => {
     const userId = req.userId; // ID do usuário autenticado
     const { id: transacaoId } = req.params;
     const transacaoData = req.body;
-
+    
     // Iniciar uma transação
     transaction = await sequelize.transaction();
 
