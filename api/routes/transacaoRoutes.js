@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
       await transaction.rollback();
     }
     console.error(error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    global.UTILS.handleSequelizeError(error, res);
   }
 });
 
@@ -71,8 +71,6 @@ router.put('/:id', async (req, res) => {
 
       // Encontrar categorias de transação associadas à transação
       const categoriasExistentes = await CategoriaTransacao.findAll({ where: { idTransacao: transacaoId } });
-      
-      console.log("Chegou aqui")
 
       const categoriasParaAtualizarOuCriar = transacaoData.categorias;
       const categoriasParaExcluir = categoriasExistentes.filter(categoria => !categoriasEnviadas.includes(categoria.idCategoria));
@@ -97,8 +95,6 @@ router.put('/:id', async (req, res) => {
       }
     }
 
-    console.log("Chegou aqui 2")
-
     // Commit da transação se tudo ocorrer bem
     await transaction.commit();
 
@@ -109,15 +105,15 @@ router.put('/:id', async (req, res) => {
     if (transaction) {
       await transaction.rollback();
     }
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    global.UTILS.handleSequelizeError(error, res);
   }
 });
 
 // Exclusão de transação
 router.delete('/:id', async (req, res) => {
   try {
-    const { id: userId } = req.userId; // ID do usuário autenticado
-    const { id: transacaoId } = req.params;
+    const userId = req.userId; // ID do usuário autenticado
+    const transacaoId = req.params.id;
 
     // Verificar se a transação pertence ao usuário
     const transacao = await Transacao.findOne({ where: { id: transacaoId, idUsuario: userId } });
@@ -132,7 +128,7 @@ router.delete('/:id', async (req, res) => {
     res.sendStatus(204);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    global.UTILS.handleSequelizeError(error, res);
   }
 });
 
@@ -144,7 +140,7 @@ router.get('/', async (req, res) => {
     res.json(transacoes);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    global.UTILS.handleSequelizeError(error, res);
   }
 });
 

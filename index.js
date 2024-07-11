@@ -6,12 +6,14 @@ const categoriaRoutes = require('./api/routes/categoriaRoutes');
 const transacaoRoutes = require('./api/routes/transacaoRoutes');
 const authRoutes = require('./api/routes/auth/authRoutes');
 const ENVIRONMENT = require('./api/environment/environment')
+const UTILS = require('./api/environment/utils')
 
 const { verificarToken } = require('./api/middleware/authMiddleware');
 
 //const categoriaTransacaoRoutes = require('./api/routes/categoriaTransacaoRoutes');
 
 global.ENVIRONMENT = ENVIRONMENT;
+global.UTILS = UTILS;
 
 const app = express();
 app.use(express.json());
