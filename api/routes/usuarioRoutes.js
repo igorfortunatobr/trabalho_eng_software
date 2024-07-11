@@ -33,22 +33,16 @@ router.post('/', async (req, res) => {
 // Atualização do usuário
 router.put('/', verificarToken, async (req, res) => {
     try {
-      const { id } = req.userId; // ID do usuário autenticado
-      const { nome, email } = req.body;
-  
-      // Verificar se o usuário está tentando editar a si mesmo
-      if (req.params.id !== id.toString()) {
-        return res.status(403).json({ message: 'Você só pode editar seu próprio perfil' });
-      }
+      const userId = req.userId; // ID do usuário autenticado
+      const { nome } = req.body;
 
       // Criar o usuário no banco de dados
       const userData = {
         nome: nome,
-        email: email,
       }
   
       // Atualizar os dados do usuário
-      await Usuario.update(userData, { where: { id } });
+      await Usuario.update(userData, { where: { id: userId } });
       res.sendStatus(204);
     } catch (error) {
       console.error(error);
@@ -57,17 +51,12 @@ router.put('/', verificarToken, async (req, res) => {
 });
 
 // Atualização da senha do usuário
-router.put('/changePassword', verificarToken, async (req, res) => {
+router.put('/changePassword/', verificarToken, async (req, res) => {
     try {
-      const { id } = req.userId; // ID do usuário autenticado
+      const userId = req.userId; // ID do usuário autenticado
       const { senha } = req.body;
 
       if (!senha) res.status(400).json({message: 'Não foi informada nenhuma senha para alteração.'})
-  
-      // Verificar se o usuário está tentando editar a si mesmo
-      if (req.params.id !== id.toString()) {
-        return res.status(403).json({ message: 'Você só pode editar seu próprio perfil' });
-      }
 
       // Criptografar a senha
       const hashedSenha = await bcrypt.hash(senha || "", 10);
@@ -78,7 +67,7 @@ router.put('/changePassword', verificarToken, async (req, res) => {
       }
   
       // Atualizar os dados do usuário
-      await Usuario.update(userData, { where: { id } });
+      await Usuario.update(userData, { where: { id: userId } });
       res.sendStatus(204);
     } catch (error) {
       console.error(error);
@@ -86,16 +75,20 @@ router.put('/changePassword', verificarToken, async (req, res) => {
     }
 });
 
-/*router.get('/', async (req, res) => {
+router.get('/', verificarToken, async (req, res) => {
     try {
-    const usuarios = await Usuario.findAll({
+      const userId = req.userId; // ID do usuário autenticado
+
+      const usuario = await Usuario.findOne({
         attributes: { exclude: ['senha'] }
-        });
-    res.json(usuarios);
+        },
+        { where: { id: userId } });
+      
+      res.json(usuario);
     } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erro interno do servidor' });
     }
-});*/
+});
 
 module.exports = router;

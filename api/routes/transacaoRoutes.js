@@ -49,7 +49,7 @@ router.put('/:id', async (req, res) => {
   let transaction;
   try {
     const userId = req.userId; // ID do usuário autenticado
-    const { id: transacaoId } = req.params;
+    const transacaoId = req.params.id;
     const transacaoData = req.body;
     
     // Iniciar uma transação
@@ -63,7 +63,7 @@ router.put('/:id', async (req, res) => {
     }
 
     // Atualizar os dados da transação
-    await transacao.update(transacaoData, { transaction });
+    await transacao.update(transacaoData.transacao, { where: { id: transacaoId, idUsuario: userId }, transaction });
 
     // Verificar se existem categorias de transação a serem excluídas
     if (transacaoData.categorias) {
@@ -71,22 +71,44 @@ router.put('/:id', async (req, res) => {
 
       // Encontrar categorias de transação associadas à transação
       const categoriasExistentes = await CategoriaTransacao.findAll({ where: { idTransacao: transacaoId } });
+      
+      console.log("Chegou aqui")
+
+      const categoriasParaAtualizarOuCriar = transacaoData.categorias;
       const categoriasParaExcluir = categoriasExistentes.filter(categoria => !categoriasEnviadas.includes(categoria.idCategoria));
 
       // Excluir as categorias de transação não presentes no objeto enviado
       await Promise.all(categoriasParaExcluir.map(categoria => categoria.destroy({ transaction })));
+
+      // Atualizar ou criar categorias de transação enviadas
+      for (const categoriaEnviada of categoriasParaAtualizarOuCriar) {
+        const categoriaExistente = categoriasExistentes.find(categoria => categoria.idCategoria === categoriaEnviada.idCategoria);
+        if (categoriaExistente) {
+          // Atualizar categoria existente
+          await categoriaExistente.update(categoriaEnviada, { where: { idCategoria: categoriaExistente.idCategoria, idTransacao: transacaoId, idUsuario: userId }, transaction });
+        } else {
+          // Criar nova categoria
+          await CategoriaTransacao.create({
+            idTransacao: transacaoId,
+            idCategoria: categoriaEnviada.idCategoria,
+            valor: categoriaEnviada.valor
+          }, { transaction });
+        }
+      }
     }
+
+    console.log("Chegou aqui 2")
 
     // Commit da transação se tudo ocorrer bem
     await transaction.commit();
 
-    res.sendStatus(204);
+    res.status(204).json(transacaoData);
   } catch (error) {
+    console.error(error);
     // Rollback da transação em caso de erro
     if (transaction) {
       await transaction.rollback();
     }
-    console.error(error);
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
 });
