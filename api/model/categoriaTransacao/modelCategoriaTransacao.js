@@ -6,11 +6,13 @@ const Categoria = require('../categoria/modelCategoria'); // Importe o modelo Ca
 const CategoriaTransacao = sequelize.define('CategoriaTransacao', {
     idTransacao: {
         type: DataTypes.INTEGER, // Tipo deve corresponder ao tipo de dado na tabela transacao
-        allowNull: false
+        allowNull: false,
+        primaryKey: true
     },
     idCategoria: {
         type: DataTypes.INTEGER, // Tipo deve corresponder ao tipo de dado na tabela categoria
-        allowNull: false
+        allowNull: false,
+        primaryKey: true
     },
     valor: {
         type: DataTypes.DOUBLE,
