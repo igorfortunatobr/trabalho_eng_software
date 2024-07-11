@@ -79,10 +79,14 @@ router.get('/', verificarToken, async (req, res) => {
     try {
       const userId = req.userId; // ID do usuário autenticado
 
-      const usuario = await Usuario.findOne({
-        attributes: { exclude: ['senha'] }
+      const usuario = await Usuario.findOne(
+        {
+          attributes: { exclude: ['senha'] }
         },
-        { where: { id: userId } });
+        { 
+          where: { id: userId } 
+        }
+      );
       
       res.json(usuario);
     } catch (error) {
@@ -90,5 +94,21 @@ router.get('/', verificarToken, async (req, res) => {
       global.UTILS.handleSequelizeError(error, res);
     }
 });
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const userId = req.userId; // Obtém o ID do usuário autenticado
+    const { senha } = req.body;
+
+    //const usuario = await Usuario.findOne({ where: { id: userId } });
+
+    //bcrypt.compareSync(senha, usuario.senha)
+
+    await Usuario.destroy({ where: { id: userId } });
+
+  } catch (error) {
+    global.UTILS.handleSequelizeError(error, res);
+  }
+})
 
 module.exports = router;
