@@ -30,9 +30,6 @@ router.post('/', async (req, res) => {
       fields: ['idTransacao', 'idCategoria', 'valor', 'createdAt', 'updatedAt'],
       transaction
     });
-    
-
-    console.log("PASSOU AQUI")
 
     // Commit da transação se tudo ocorrer bem
     await transaction.commit();

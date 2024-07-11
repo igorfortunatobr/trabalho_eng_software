@@ -5,9 +5,13 @@ const usuarioRoutes = require('./api/routes/usuarioRoutes');
 const categoriaRoutes = require('./api/routes/categoriaRoutes');
 const transacaoRoutes = require('./api/routes/transacaoRoutes');
 const authRoutes = require('./api/routes/auth/authRoutes');
+const ENVIRONMENT = require('./api/environment/environment')
+
 const { verificarToken } = require('./api/middleware/authMiddleware');
 
 //const categoriaTransacaoRoutes = require('./api/routes/categoriaTransacaoRoutes');
+
+global.ENVIRONMENT = ENVIRONMENT;
 
 const app = express();
 app.use(express.json());
