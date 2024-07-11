@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(categoria);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    global.UTILS.handleSequelizeError(error, res);
   }
 });
 
@@ -48,7 +48,7 @@ router.put('/:id', async (req, res) => {
     if (transaction) {
       await transaction.rollback();
     }
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    global.UTILS.handleSequelizeError(error, res);
   }
 });
 
@@ -59,9 +59,26 @@ router.get('/', async (req, res) => {
     const categorias = await Categoria.findAll({ where: { idUsuario: userId } });
     res.json(categorias);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    global.UTILS.handleSequelizeError(error, res);
   }
 });
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const userId = req.userId; // Obtém o ID do usuário autenticado
+    const categoriaId = req.params.id;
+
+    // Verificar se a transação pertence ao usuário
+    const categoria = await Categoria.findOne({ where: { id: categoriaId, idUsuario: userId } });
+    if (!categoria) {
+      return res.status(403).json({ message: 'Você só pode excluir suas próprias categorias' });
+    }
+
+    await Categoria.destroy({ where: { id: categoriaId, idUsuario: userId } });
+
+  } catch (error) {
+    global.UTILS.handleSequelizeError(error, res);
+  }
+})
 
 module.exports = router;

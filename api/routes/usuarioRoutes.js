@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
         res.status(201).json(usuario);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Erro interno do servidor' });
+        global.UTILS.handleSequelizeError(error, res);
     }
 });
 
@@ -46,7 +46,7 @@ router.put('/', verificarToken, async (req, res) => {
       res.sendStatus(204);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Erro interno do servidor' });
+      global.UTILS.handleSequelizeError(error, res);
     }
 });
 
@@ -71,7 +71,7 @@ router.put('/changePassword/', verificarToken, async (req, res) => {
       res.sendStatus(204);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Erro interno do servidor' });
+      global.UTILS.handleSequelizeError(error, res);
     }
 });
 
@@ -86,8 +86,8 @@ router.get('/', verificarToken, async (req, res) => {
       
       res.json(usuario);
     } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+      console.error(error);
+      global.UTILS.handleSequelizeError(error, res);
     }
 });
 
