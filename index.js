@@ -1,16 +1,17 @@
 require('dotenv').config();
 const express = require('express');
 const sequelize = require('./database/database');
-const usuarioRoutes = require('./api/routes/usuarioRoutes');
-const categoriaRoutes = require('./api/routes/categoriaRoutes');
-const transacaoRoutes = require('./api/routes/transacaoRoutes');
-const authRoutes = require('./api/routes/auth/authRoutes');
+const usuarioController = require('./api/controller/usuarioController');
+const categoriaController = require('./api/controller/categoriaController');
+const transacaoController = require('./api/controller/transacaoController');
+const authController = require('./api/controller/auth/authController');
+const relatorioController = require('./api/controller/relatorioController')
 const ENVIRONMENT = require('./api/environment/environment')
 const UTILS = require('./api/environment/utils')
 
 const { verificarToken } = require('./api/middleware/authMiddleware');
 
-//const categoriaTransacaoRoutes = require('./api/routes/categoriaTransacaoRoutes');
+//const categoriaTransacaoController = require('./api/controller/categoriaTransacaoController');
 
 global.ENVIRONMENT = ENVIRONMENT;
 global.UTILS = UTILS;
@@ -35,18 +36,21 @@ app.use((err, req, res, next) => {
 // Middleware para analisar corpos de solicitação JSON
 app.use(express.json());
 
-app.use('/usuarios', usuarioRoutes);
+// Rotas publicas
+app.use('/usuarios', usuarioController);
 
 // Rotas de autenticação
-app.use('/auth', authRoutes);
+app.use('/auth', authController);
 
+////////////////////////////////////////////////////////
 // Middleware para verificar token JWT em todas as rotas
 app.use(verificarToken);
+////////////////////////////////////////////////////////
 
-// Rotas
-app.use('/categorias', categoriaRoutes);
-app.use('/transacoes', transacaoRoutes);
-//app.use('/categoria-transacoes', categoriaTransacaoRoutes);
+// Rotas privadas
+app.use('/categorias', categoriaController);
+app.use('/transacoes', transacaoController);
+app.use('/relatorio', relatorioController);
 
 // Sincronização do modelo com o banco de dados e inicialização do servidor
 sequelize.sync()
