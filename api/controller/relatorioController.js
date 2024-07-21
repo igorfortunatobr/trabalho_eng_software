@@ -16,13 +16,13 @@ router.post('/', async (req, res) => {
 
         switch (tipoRelatorio) {
             case 'transacoes':
-                strategy = new ReportTransacoes(userId, filtro);
+                strategy = new ReportTransacoes(userId, filtro, "Relatório de Transações");
                 break;
             case 'transacaoCategoria':
-                strategy = new ReportTransacaoCategoria(userId, filtro);
+                strategy = new ReportTransacaoCategoria(userId, filtro, "Relatório de Transações por categoria");
                 break;
             case 'gastosCategoria':
-                strategy = new ReportGastosCategoria(userId, filtro);
+                strategy = new ReportGastosCategoria(userId, filtro, "Relatório de Gastos por categoria");
                 break;
             default:
                 throw new Error('Tipo de relatório inválido');
@@ -30,9 +30,13 @@ router.post('/', async (req, res) => {
     
         const relatorioBase64 = await strategy.gerarRelatorio();
 
+        const relatorioData = {pdfBase64: relatorioBase64}
+
         res.status(200).json(relatorioBase64);
 
     } catch (error) {
         global.UTILS.handleSequelizeError(error, res);
     }
 });
+
+module.exports = router;

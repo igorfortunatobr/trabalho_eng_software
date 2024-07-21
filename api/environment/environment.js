@@ -10,6 +10,10 @@ const ENVIRONMENT = {
         EXPIRED_TOKEN: 'Token expirado! Faça login novamente.',
         AUTHENTICATION_ERROR: 'Falha na autenticação do token.',
         EMPTY_TOKEN: 'Token de autenticação não fornecido'
+    },
+    TRANSACTION_TYPES: {
+        1: 'DESPESA',
+        2: 'RECEITA'
     }
 }
 

@@ -15,6 +15,10 @@ const Transacao = sequelize.define('Transacao', {
     type: DataTypes.DATE,
     allowNull: false
   },
+  tipo: {
+    type: DataTypes.INTEGER,
+    allowNull:false
+  },
   valor: {
     type: DataTypes.DOUBLE,
     allowNull: false
@@ -24,5 +28,6 @@ const Transacao = sequelize.define('Transacao', {
     tableName: 'transacao',
     timestamps: true // Adicionando os campos createdAt e updatedAt
 });
+
 
 module.exports = Transacao;
