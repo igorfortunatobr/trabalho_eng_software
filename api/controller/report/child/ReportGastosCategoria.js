@@ -1,3 +1,8 @@
+const CategoriaTransacao = require('../../../model/categoriaTransacao/modelCategoriaTransacao');
+const Transacao = require('../../../model/transacao/modelTransacao');
+const Categoria = require('../../../model/categoria/modelCategoria');
+const sequelize = require('../../../../database/database');
+
 const {RelatorioStrategy} = require('../base/ReportStrategy');
 
 class ReportGastosCategoria extends RelatorioStrategy {
@@ -10,10 +15,22 @@ class ReportGastosCategoria extends RelatorioStrategy {
         }
 
         const gastosPorCategoria = await CategoriaTransacao.findAll({
-            include: [Categoria],
+            include: [
+                {
+                    model: Transacao,
+                    as: 'Transacao',
+                    attributes: ['data', 'tipo'], // Campos que você deseja retornar
+                    where: whereClause
+                },
+                {
+                    model: Categoria,
+                    as: 'Categoria',
+                    attributes: ['nome'], // Campos que você deseja retornar
+                }
+            ],
             attributes: [
                 'idCategoria',
-                [sequelize.fn('SUM', sequelize.col('valor')), 'totalGasto']
+                [sequelize.fn('SUM', sequelize.col('CategoriaTransacao.valor')), 'totalGasto']
             ],
             where: whereClause,
             group: ['idCategoria']
@@ -21,11 +38,14 @@ class ReportGastosCategoria extends RelatorioStrategy {
         return this.gerarPDF(gastosPorCategoria);
     }
 
-    montarConteudo(doc, data) {
-        doc.fontSize(16).text('Relatório de Gastos por Categoria');
-        data.forEach(item => {
-            doc.fontSize(12).text(`Categoria: ${item.categoria.nome} - Total Gasto: ${item.dataValues.totalGasto}`);
-        });
+    adicionarCorpo(doc, data) {
+
+        const headers = ['Categoria', 'Total Gasto (R$)'];
+        const rows = data.map(item => [
+            item.Categoria.nome,
+            item.dataValues.totalGasto.toFixed(2)
+        ]);
+        this.desenharTabela(doc, headers, rows);
     }
 }
 

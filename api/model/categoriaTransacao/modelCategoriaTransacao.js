@@ -25,7 +25,7 @@ const CategoriaTransacao = sequelize.define('CategoriaTransacao', {
 });
 
 // Defina as associações com os modelos Transacao e Categoria
-CategoriaTransacao.belongsTo(Transacao, { foreignKey: 'idTransacao', onDelete: 'CASCADE' });
-CategoriaTransacao.belongsTo(Categoria, { foreignKey: 'idCategoria', onDelete: 'CASCADE' });
+CategoriaTransacao.belongsTo(Transacao, { foreignKey: 'idTransacao', onDelete: 'CASCADE', as: 'Transacao' });
+CategoriaTransacao.belongsTo(Categoria, { foreignKey: 'idCategoria', onDelete: 'CASCADE', as: 'Categoria' });
 
 module.exports = CategoriaTransacao;
