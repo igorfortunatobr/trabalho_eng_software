@@ -8,6 +8,7 @@ const authController = require('./api/controller/auth/authController');
 const relatorioController = require('./api/controller/relatorioController')
 const ENVIRONMENT = require('./api/environment/environment')
 const UTILS = require('./api/environment/utils')
+const cors = require("cors");
 
 const { verificarToken } = require('./api/middleware/authMiddleware');
 
@@ -17,6 +18,17 @@ global.ENVIRONMENT = ENVIRONMENT;
 global.UTILS = UTILS;
 
 const app = express();
+
+// * CORS - no origin define os sites que podem acessar a API (não aceita localhost)
+app.use(
+  cors({
+    // origin: [
+    //   "https://testes-siaweb.ddns.net/",
+    //   "https://siaweb.criareti.com.br/",
+    // ],
+  }),
+);
+
 app.use(express.json());
 
 // Middleware de tratamento de erros

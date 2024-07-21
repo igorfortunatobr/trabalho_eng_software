@@ -6,7 +6,7 @@ const { verificarToken }  = require("../middleware/authMiddleware")
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         const { nome, email, senha } = req.body;
 
