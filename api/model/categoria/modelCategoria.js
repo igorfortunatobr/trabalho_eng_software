@@ -17,8 +17,15 @@ const Categoria = sequelize.define('Categoria', {
   }
 }, 
 {
-    tableName: 'categoria',
-    timestamps: true // Adicionando os campos createdAt e updatedAt
+  tableName: 'categoria',
+  timestamps: true // Adicionando os campos createdAt e updatedAt
 });
+
+Categoria.associate = function(models) {
+  Categoria.hasMany(models.CategoriaTransacao, {
+    foreignKey: 'idCategoria',
+    as: 'CategoriaTransacoes'
+  });
+};
 
 module.exports = Categoria;

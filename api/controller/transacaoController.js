@@ -2,6 +2,7 @@ const express = require('express');
 const sequelize = require('../../database/database');
 const Transacao = require('../model/transacao/modelTransacao');
 const CategoriaTransacao = require('../model/categoriaTransacao/modelCategoriaTransacao');
+const Categoria = require('../model/categoria/modelCategoria');
 
 const router = express.Router();
 
@@ -138,6 +139,50 @@ router.get('/', async (req, res) => {
     
     const transacoes = await Transacao.findAll({ where: { idUsuario: userId } });
     res.json(transacoes);
+  } catch (error) {
+    console.error(error);
+    global.UTILS.handleSequelizeError(error, res);
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const transacaoId = req.params.id;
+    const userId = req.userId; // Obtém o ID do usuário autenticado
+
+    // Buscar a transação pelo ID
+    const transacao = await Transacao.findOne({
+      where: { id: transacaoId, idUsuario: userId }
+    });
+
+    if (!transacao) {
+      return res.status(404).json({ error: 'Transação não encontrada' });
+    }
+
+    // Buscar as categorias associadas à transação
+    const categoriasTransacoes = await CategoriaTransacao.findAll({
+      where: { idTransacao: transacaoId },
+      include: [{
+        model: Categoria,
+        as: 'Categoria'
+      }]
+    });
+
+    // Formatando a resposta
+    const response = {
+      id: transacao.id,
+      idUsuario: transacao.idUsuario,
+      data: transacao.data,
+      tipo: transacao.tipo,
+      valor: transacao.valor,
+      categorias: categoriasTransacoes.map(ct => ({
+        idCategoria: ct.idCategoria,
+        nome: ct.Categoria ? ct.Categoria.nome : '',
+        valor: ct.valor
+      }))
+    };
+
+    res.json(response);
   } catch (error) {
     console.error(error);
     global.UTILS.handleSequelizeError(error, res);

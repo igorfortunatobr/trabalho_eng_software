@@ -17,7 +17,7 @@ const Transacao = sequelize.define('Transacao', {
   },
   tipo: {
     type: DataTypes.INTEGER,
-    allowNull:false
+    allowNull: false
   },
   valor: {
     type: DataTypes.DOUBLE,
@@ -25,9 +25,15 @@ const Transacao = sequelize.define('Transacao', {
   }
 }, 
 {
-    tableName: 'transacao',
-    timestamps: true // Adicionando os campos createdAt e updatedAt
+  tableName: 'transacao',
+  timestamps: true // Adicionando os campos createdAt e updatedAt
 });
 
+Transacao.associate = function(models) {
+  Transacao.hasMany(models.CategoriaTransacao, {
+    foreignKey: 'idTransacao',
+    as: 'CategoriaTransacoes'
+  });
+};
 
 module.exports = Transacao;
