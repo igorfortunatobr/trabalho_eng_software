@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 // Crie a instância do Axios
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // Atualize com seu URL
+  baseURL: 'http://localhost:8098', // Atualize com seu URL
 });
 
 // Interceptor de requisição
