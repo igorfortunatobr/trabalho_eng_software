@@ -11,7 +11,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token && config.headers) {
-      (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+      (config.headers as Record<string, string>)['authorization'] = `${token}`;
     }
     return config;
   },
@@ -26,7 +26,14 @@ api.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response) {
       const errorMessage = (error.response.data as { message?: string }).message || 'Erro desconhecido.';
-      toast.error(errorMessage);
+      const errCode = (error.response.data as { errCode?: string }).errCode;
+
+      if (errCode === 'EXPIRED_TOKEN') {
+        toast.error('Token expirado! Faça login novamente.');
+        window.location.href = '/login'; // Redireciona para a página de login
+      } else {
+        toast.error(errorMessage);
+      }
     } else if (error.request) {
       toast.error('Erro de rede. Verifique sua conexão com a internet ou se a API está online.');
     } else {

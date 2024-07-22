@@ -64,6 +64,15 @@ app.use('/categorias', categoriaController);
 app.use('/transacoes', transacaoController);
 app.use('/relatorio', relatorioController);
 
+const Transacao = require('./api/model/transacao/modelTransacao');
+const Categoria = require('./api/model/categoria/modelCategoria');
+const CategoriaTransacao = require('./api/model/categoriaTransacao/modelCategoriaTransacao');
+
+// Definir as associações
+Transacao.associate({ CategoriaTransacao });
+Categoria.associate({ CategoriaTransacao });
+CategoriaTransacao.associate({ Transacao, Categoria });
+
 // Sincronização do modelo com o banco de dados e inicialização do servidor
 sequelize.sync()
   .then(() => {

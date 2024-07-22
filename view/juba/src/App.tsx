@@ -1,38 +1,72 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Login from './components/Login';
+import Login from './components/Public/Login';
 import Dashboard from './components/Dashboard';
-import Register from './components/Register';
-import CategoriaCRUD from './components/CategoriaCRUD';
-import TransacaoCRUD from './components/TransacaoCRUD';
+import Register from './components/Public/Register';
+import CategoriaCRUD from './components/Categoria/Categoria';
+import TransacaoCRUD from './components/Transacao/Transacao';
 import Relatorios from './components/Relatorios';
 import NavigationBar from './components/Navbar';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { AuthProvider, useAuth } from './context/AuthContext';
+
+const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? (
+    <>
+      <NavigationBar />
+      {children}
+    </>
+  ) : (
+    <Navigate to="/login" />
+  );
+};
 
 const App: React.FC = () => {
-  const isAuthenticated = () => {
-    console.log("ESTÁ AUTENTICADO.")
-    return !!localStorage.getItem('token');
-  };
-
   return (
-    <Router>
-      <NavigationBar />
-      <div className="container mt-4">
+    <AuthProvider>
+      <Router>
         <Routes>
-          <Route path="/" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />} />
-          <Route path="/categorias" element={isAuthenticated() ? <CategoriaCRUD /> : <Navigate to="/login" />} />
-          <Route path="/transacoes" element={isAuthenticated() ? <TransacaoCRUD /> : <Navigate to="/login" />} />
-          <Route path="/relatorios" element={isAuthenticated() ? <Relatorios /> : <Navigate to="/login" />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/categorias"
+            element={
+              <PrivateRoute>
+                <CategoriaCRUD />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/transacoes"
+            element={
+              <PrivateRoute>
+                <TransacaoCRUD />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/relatorios"
+            element={
+              <PrivateRoute>
+                <Relatorios />
+              </PrivateRoute>
+            }
+          />
         </Routes>
-      </div>
-      <ToastContainer />
-    </Router>
+        <ToastContainer />
+      </Router>
+    </AuthProvider>
   );
 };
 
