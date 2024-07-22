@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Form } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import api from '../../services/api';
 import './Register.css'; // Importe o arquivo CSS
 
@@ -39,63 +39,67 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-left">
-        <div className="logo">LOGO</div>
-        <h1>Texto de impacto chamativo</h1>
+    <div className="register-container d-flex flex-column">
+      <div className="register-content d-flex flex-grow-1">
+        <div className="register-left d-flex flex-column align-items-center justify-content-center">
+          <div className="logo">
+            <img src="./logo.png" alt="JUBA Logo" className="navbar-logo" />
+          </div>
+          <h2>Assuma o controle de suas finanças de forma definitiva</h2>
+          <h1>Cuidar do seu dinheiro pode ser simples. Com o Mobills, você organiza e planeja sua vida financeira em um único lugar.</h1>
+        </div>
+        <div className="register-right d-flex flex-column align-items-center justify-content-center">
+          <h2>Cadastrar uma nova conta</h2>
+          {error && <div className="alert alert-danger">{error}</div>}
+          <Form onSubmit={handleRegister}>
+            <Form.Group controlId="formNome" className="mt-3">
+              <Form.Control
+                type="text"
+                placeholder="Digite o seu nome"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="formEmail" className="mt-3">
+              <Form.Control
+                type="email"
+                placeholder="Digite o seu e-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="formPassword" className="mt-3">
+              <Form.Control
+                type="password"
+                placeholder="Digite a sua senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="formConfirmPassword" className="mt-3">
+              <Form.Control
+                type="password"
+                placeholder="Confirme a sua senha"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit" className="mt-3 btn-register">
+              Criar conta
+            </Button>
+            <button className="btn btn-link" onClick={() => navigate('/login')}>
+              Voltar para o Login
+            </button>
+          </Form>
+        </div>
       </div>
-      <div className="register-right">
-        <h2>Registro</h2>
-        {error && <div className="alert alert-danger">{error}</div>}
-        <Form onSubmit={handleRegister}>
-          <Form.Group controlId="formNome">
-            <Form.Label>Nome</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Digite seu nome"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="formEmail" className="mt-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Digite seu email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="formPassword" className="mt-3">
-            <Form.Label>Senha</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Digite sua senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="formConfirmPassword" className="mt-3">
-            <Form.Label>Confirmar Senha</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Confirme sua senha"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Button variant="primary" type="submit" className="mt-3">
-            Registrar
-          </Button>
-          <button className="btn btn-link" onClick={() => navigate('/login')}>
-            Voltar
-          </button>
-        </Form>
-      </div>
+      <footer className="footer mt-auto">
+        © 2024 Direitos Reservados | Juba - Gestão Financeira
+      </footer>
     </div>
   );
 };

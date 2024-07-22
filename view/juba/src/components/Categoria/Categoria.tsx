@@ -55,8 +55,10 @@ const CategoriaCRUD: React.FC = () => {
   return (
     <div className="container mt-5">
       <Alert show={alert.show} message={alert.message} variant={alert.variant} onClose={hideAlert} />
-      <h2>CRUD de Categorias</h2>
-      <button className="btn btn-primary mb-3" onClick={handleShowModal}>Nova Categoria</button>
+      <h2>Listagem de Categorias</h2>
+      <div className="d-flex justify-content-end mb-3">
+        <button className="btn btn-primary" onClick={handleShowModal}>Nova Categoria</button>
+      </div>
       <CategoriaTable 
         categorias={categorias} 
         handleEdit={handleEdit} 

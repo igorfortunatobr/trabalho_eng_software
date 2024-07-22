@@ -1,8 +1,14 @@
-/* Register.css */
+/* src/components/Public/Register.css */
 
 .register-container {
   display: flex;
-  height: 100vh;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.register-content {
+  display: flex;
+  flex: 1;
 }
 
 .register-left {
@@ -27,19 +33,24 @@
   font-weight: bold;
 }
 
-.register-left h1 {
+.register-left h1, .register-left h2 {
   margin-top: 20px;
   font-size: 24px;
   text-align: center;
 }
 
 .register-right {
+  background-color: #fff; /* Fundo branco */
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 40px;
+}
+
+.register-right h2 {
+  margin-bottom: 20px;
 }
 
 .register-right form {
@@ -47,11 +58,29 @@
   max-width: 400px;
 }
 
-.register-right .btn-primary {
-  background-color: #ffc107; /* Cor do botão Registrar */
+.register-right .form-control {
+  background-color: #d8b4fe; /* Cor do campo de entrada */
   border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 15px;
 }
 
-.register-right .btn-primary:hover {
+.register-right .btn-register {
+  background-color: #ffc107; /* Cor do botão Registrar */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.register-right .btn-register:hover {
   background-color: #e0a800; /* Cor do botão ao passar o mouse */
+}
+
+.footer {
+  background-color: #e0e0e0;
+  text-align: center;
+  padding: 10px;
+  width: 100%;
 }
