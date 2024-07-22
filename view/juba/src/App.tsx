@@ -7,8 +7,9 @@ import CategoriaCRUD from './components/Categoria/Categoria';
 import TransacaoCRUD from './components/Transacao/Transacao';
 import Relatorios from './components/Relatorios';
 import NavigationBar from './components/Navbar';
-import { ToastContainer } from 'react-toastify';
+import Footer from './components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css'; // Importe o arquivo CSS global
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -17,7 +18,7 @@ const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   return isAuthenticated ? (
     <>
       <NavigationBar />
-      {children}
+      <div className="main-content">{children}</div>
     </>
   ) : (
     <Navigate to="/login" />
@@ -28,43 +29,45 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/categorias"
-            element={
-              <PrivateRoute>
-                <CategoriaCRUD />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/transacoes"
-            element={
-              <PrivateRoute>
-                <TransacaoCRUD />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/relatorios"
-            element={
-              <PrivateRoute>
-                <Relatorios />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-        <ToastContainer />
+        <div className="app-container">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/categorias"
+              element={
+                <PrivateRoute>
+                  <CategoriaCRUD />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/transacoes"
+              element={
+                <PrivateRoute>
+                  <TransacaoCRUD />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/relatorios"
+              element={
+                <PrivateRoute>
+                  <Relatorios />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+          <Footer />
+        </div>
       </Router>
     </AuthProvider>
   );

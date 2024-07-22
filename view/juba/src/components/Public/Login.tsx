@@ -16,7 +16,7 @@ const Login: React.FC = () => {
     try {
       const response = await api.post('/auth/login', { email, senha: password });
       login(response.data.token);
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       setError('Credenciais inválidas. Tente novamente.');
     }
@@ -24,19 +24,18 @@ const Login: React.FC = () => {
 
   return (
     <div className="login-container">
-      <div className="login-left">
-        <div className="logo">LOGO</div>
-        <h1>Texto de impacto chamativo</h1>
-      </div>
-      <div className="login-right">
-        <h2>Login</h2>
+      <div className="login-content">
+        <div className="logo">
+          <img src="./logo.png" alt="JUBA Logo" className="navbar-logo" />
+        </div>
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label htmlFor="email" className="form-label">Email</label>
+            <label htmlFor="email" className="form-label">Usuário</label>
             <input
               type="email"
               className="form-control"
+              placeholder="Digite seu e-mail"
               id="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -44,17 +43,18 @@ const Login: React.FC = () => {
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="password" className="form-label">Senha</label>
+            <label htmlFor="password" className="form-label">Login</label>
             <input
               type="password"
               className="form-control"
+              placeholder="Digite sua senha"
               id="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary">Entrar</button>
+          <button type="submit" className="btn btn-primary">Login</button>
         </form>
         <button className="btn btn-link" onClick={() => navigate('/register')}>
           Cadastre-se

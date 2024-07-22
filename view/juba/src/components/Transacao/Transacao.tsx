@@ -81,8 +81,10 @@ const TransacaoCRUD: React.FC = () => {
   return (
     <div className="container mt-5">
       <Alert show={alert.show} message={alert.message} variant={alert.variant} onClose={hideAlert} />
-      <h2>CRUD de Transações</h2>
-      <button className="btn btn-primary mb-3" onClick={handleShowModal}>Nova Transação</button>
+      <h2>Listagem de Transações</h2>
+      <div className="d-flex justify-content-end mb-3">
+        <button className="btn btn-primary mb-3" onClick={handleShowModal}>Nova Transação</button>
+      </div>
       <TransacaoTable 
         transacoes={transacoes} 
         handleEdit={handleEdit} 
