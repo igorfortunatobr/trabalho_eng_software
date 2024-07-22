@@ -25,12 +25,14 @@ const Relatorios: React.FC = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Relatórios</h2>
-      <button className="btn btn-primary" onClick={generateReport}>Gerar Relatório</button>
-      {base64 && (
-        <button className="btn btn-secondary ml-3" onClick={downloadPDF}>Baixar PDF</button>
-      )}
+    <div>
+      <div className="container mt-5">
+        <h2>Relatórios</h2>
+        <button className="btn btn-primary" onClick={generateReport}>Gerar Relatório</button>
+        {base64 && (
+          <button className="btn btn-secondary ml-3" onClick={downloadPDF}>Baixar PDF</button>
+        )}
+      </div>
     </div>
   );
 };
