@@ -7,6 +7,9 @@ import CategoriaCRUD from './components/CategoriaCRUD';
 import TransacaoCRUD from './components/TransacaoCRUD';
 import Relatorios from './components/Relatorios';
 import NavigationBar from './components/Navbar';
+import { ToastContainer } from 'react-toastify';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const App: React.FC = () => {
   const isAuthenticated = () => {
@@ -28,6 +31,7 @@ const App: React.FC = () => {
           <Route path="/relatorios" element={isAuthenticated() ? <Relatorios /> : <Navigate to="/login" />} />
         </Routes>
       </div>
+      <ToastContainer />
     </Router>
   );
 };
