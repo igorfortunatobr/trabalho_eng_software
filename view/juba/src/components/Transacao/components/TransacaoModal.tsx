@@ -40,12 +40,18 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
   selectedTransacao,
   showAlert
 }) => {
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
   const [valor, setValor] = useState('');
-  const [data, setData] = useState('');
+  const [data, setData] = useState(getCurrentDate());
   const [tipo, setTipo] = useState("1");
   const [categoriaTransacoes, setCategoriaTransacoes] = useState<CategoriaTransacao[]>([]);
   const [novaCategoriaId, setNovaCategoriaId] = useState('');
   const [novaCategoriaValor, setNovaCategoriaValor] = useState('');
+  
 
   useEffect(() => {
     if (selectedTransacao) {
@@ -113,7 +119,7 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
 
   const resetForm = () => {
     setValor('');
-    setData('');
+    setData(getCurrentDate());
     setTipo("1");
     setCategoriaTransacoes([]);
   };

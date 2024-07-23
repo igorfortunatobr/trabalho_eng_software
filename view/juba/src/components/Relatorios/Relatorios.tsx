@@ -8,9 +8,15 @@ interface Categoria {
 }
 
 const Relatorios: React.FC = () => {
+  // Obter a data atual formatada como 'YYYY-MM-DD'
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
   const [tipoRelatorio, setTipoRelatorio] = useState<string>('transacoes');
-  const [dataInicio, setDataInicio] = useState<string>('');
-  const [dataFim, setDataFim] = useState<string>('');
+  const [dataInicio, setDataInicio] = useState<string>(getCurrentDate());
+  const [dataFim, setDataFim] = useState<string>(getCurrentDate());
   const [idCategoria, setIdCategoria] = useState<string>('');
   const [tipoTransacao, setTipoTransacao] = useState<string>('1'); // 1 para Despesas, 2 para Receitas
   const [categorias, setCategorias] = useState<Categoria[]>([]);
