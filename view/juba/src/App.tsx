@@ -66,8 +66,8 @@ const App: React.FC = () => {
               }
             />
           </Routes>
-          <Footer />
         </div>
+        <Footer />
       </Router>
     </AuthProvider>
   );

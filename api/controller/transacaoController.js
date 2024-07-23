@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/id/:id', async (req, res) => {
   let transaction;
   try {
     const userId = req.userId; // ID do usuário autenticado
@@ -111,7 +111,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Exclusão de transação
-router.delete('/:id', async (req, res) => {
+router.delete('/id/:id', async (req, res) => {
   try {
     const userId = req.userId; // ID do usuário autenticado
     const transacaoId = req.params.id;
@@ -133,7 +133,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/all', async (req, res) => {
   try {
     const userId = req.userId; // Obtém o ID do usuário autenticado
     
@@ -145,7 +145,135 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/relacao-receitas-despesas-mensal', async (req, res) => {
+  try {
+    const userId = req.userId; // ID do usuário autenticado
+
+    const receitas = await Transacao.findAll({
+      attributes: [
+        [sequelize.fn('MONTH', sequelize.col('data')), 'mes'],
+        [sequelize.fn('SUM', sequelize.col('valor')), 'total']
+      ],
+      where: { tipo: 1, idUsuario: userId },
+      group: [sequelize.fn('MONTH', sequelize.col('data'))],
+      order: [sequelize.fn('MONTH', sequelize.col('data'))]
+    });
+
+    const despesas = await Transacao.findAll({
+      attributes: [
+        [sequelize.fn('MONTH', sequelize.col('data')), 'mes'],
+        [sequelize.fn('SUM', sequelize.col('valor')), 'total']
+      ],
+      where: { tipo: 2, idUsuario: userId },
+      group: [sequelize.fn('MONTH', sequelize.col('data'))],
+      order: [sequelize.fn('MONTH', sequelize.col('data'))]
+    });
+
+    const receitasMensais = Array(12).fill(0);
+    const despesasMensais = Array(12).fill(0);
+
+    receitas.forEach((r) => {
+      receitasMensais[r.get('mes') - 1] = parseFloat(r.get('total'));
+    });
+
+    despesas.forEach((d) => {
+      despesasMensais[d.get('mes') - 1] = parseFloat(d.get('total'));
+    });
+
+    res.json({
+      receitas: receitasMensais,
+      despesas: despesasMensais
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erro ao buscar dados de receitas e despesas mensais' });
+  }
+});
+
+// Endpoint para obter a relação de receitas e despesas
+router.get('/relacao-receitas-despesas', async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const receitas = await Transacao.sum('valor', { where: { idUsuario: userId, tipo: 2 } });
+    const despesas = await Transacao.sum('valor', { where: { idUsuario: userId, tipo: 1 } });
+
+    res.json({ receitas, despesas });
+  } catch (error) {
+    console.error(error);
+    global.UTILS.handleSequelizeError(error, res);
+  }
+});
+
+// Endpoint para obter a quantidade de transações por categoria
+router.get('/quantidade-transacoes-categoria', async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const categorias = await Categoria.findAll({ where: { idUsuario: userId } });
+    const categoriasMap = categorias.reduce((map, categoria) => {
+      map[categoria.id] = { nome: categoria.nome, quantidade: 0 };
+      return map;
+    }, {});
+
+    const transacoes = await Transacao.findAll({
+      where: { idUsuario: userId },
+      include: [{
+        model: CategoriaTransacao,
+        as: 'CategoriaTransacoes'
+      }]
+    });
+
+    transacoes.forEach(transacao => {
+      transacao.CategoriaTransacoes.forEach(categoriaTransacao => {
+        if (categoriasMap[categoriaTransacao.idCategoria]) {
+          categoriasMap[categoriaTransacao.idCategoria].quantidade += 1;
+        }
+      });
+    });
+
+    res.json(Object.values(categoriasMap));
+  } catch (error) {
+    console.error(error);
+    global.UTILS.handleSequelizeError(error, res);
+  }
+});
+
+// Endpoint para obter o valor total das transações por categoria
+router.get('/valor-total-transacoes-categoria', async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const categorias = await Categoria.findAll({ where: { idUsuario: userId } });
+    const categoriasMap = categorias.reduce((map, categoria) => {
+      map[categoria.id] = { nome: categoria.nome, valor: 0 };
+      return map;
+    }, {});
+
+    const transacoes = await Transacao.findAll({
+      where: { idUsuario: userId },
+      include: [{
+        model: CategoriaTransacao,
+        as: 'CategoriaTransacoes'
+      }]
+    });
+
+    transacoes.forEach(transacao => {
+      transacao.CategoriaTransacoes.forEach(categoriaTransacao => {
+        if (categoriasMap[categoriaTransacao.idCategoria]) {
+          categoriasMap[categoriaTransacao.idCategoria].valor += categoriaTransacao.valor;
+        }
+      });
+    });
+
+    res.json(Object.values(categoriasMap));
+  } catch (error) {
+    console.error(error);
+    global.UTILS.handleSequelizeError(error, res);
+  }
+});
+
+router.get('/id/:id', async (req, res) => {
   try {
     const transacaoId = req.params.id;
     const userId = req.userId; // Obtém o ID do usuário autenticado

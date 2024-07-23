@@ -1,11 +1,12 @@
 import React from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { Badge } from 'react-bootstrap';
 
 interface Transacao {
   id: number;
   idUsuario: number;
   data: string;
-  tipo: number;
+  tipo: string;
   valor: number;
   categorias: CategoriaTransacao[];
 }
@@ -30,10 +31,10 @@ const TransacaoTable: React.FC<TransacaoTableProps> = ({
   <table className="table mt-3">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Valor</th>
-        <th>Data</th>
+        <th>Número</th>
+        <th>Valor (R$)</th>
         <th>Tipo</th>
+        <th>Data</th>
         <th>Ações</th>
       </tr>
     </thead>
@@ -41,9 +42,9 @@ const TransacaoTable: React.FC<TransacaoTableProps> = ({
       {transacoes.map((transacao: Transacao) => (
         <tr key={transacao.id}>
           <td>{transacao.id}</td>
-          <td>{transacao.valor}</td>
+          <td>{transacao.valor.toFixed(2)}</td>
+          <td>{transacao.tipo === "1" ? <Badge bg="danger">Despesa</Badge> : <Badge bg="success">Receita</Badge>}</td>
           <td>{new Date(transacao.data).toLocaleDateString()}</td>
-          <td>{transacao.tipo === 1 ? 'Despesa' : 'Receita'}</td>
           <td>
             <button className="btn btn-warning mx-2" onClick={() => handleEdit(transacao.id)}><FaEdit /></button>
             <button className="btn btn-danger mx-2" onClick={() => handleDelete(transacao.id)}><FaTrash /></button>
