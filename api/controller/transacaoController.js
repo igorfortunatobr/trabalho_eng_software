@@ -154,7 +154,7 @@ router.get('/relacao-receitas-despesas-mensal', async (req, res) => {
         [sequelize.fn('MONTH', sequelize.col('data')), 'mes'],
         [sequelize.fn('SUM', sequelize.col('valor')), 'total']
       ],
-      where: { tipo: 1, idUsuario: userId },
+      where: { tipo: "2", idUsuario: userId },
       group: [sequelize.fn('MONTH', sequelize.col('data'))],
       order: [sequelize.fn('MONTH', sequelize.col('data'))]
     });
@@ -164,7 +164,7 @@ router.get('/relacao-receitas-despesas-mensal', async (req, res) => {
         [sequelize.fn('MONTH', sequelize.col('data')), 'mes'],
         [sequelize.fn('SUM', sequelize.col('valor')), 'total']
       ],
-      where: { tipo: 2, idUsuario: userId },
+      where: { tipo: "1", idUsuario: userId },
       group: [sequelize.fn('MONTH', sequelize.col('data'))],
       order: [sequelize.fn('MONTH', sequelize.col('data'))]
     });
