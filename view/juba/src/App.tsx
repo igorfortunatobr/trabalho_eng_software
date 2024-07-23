@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Login from './components/Public/Login';
-import Dashboard from './components/Dashboard';
-import Register from './components/Public/Register';
+import Login from './components/Public/login/Login';
+import Dashboard from './components/Dashboard/Dashboard';
+import Register from './components/Public/register/Register';
 import CategoriaCRUD from './components/Categoria/Categoria';
 import TransacaoCRUD from './components/Transacao/Transacao';
-import Relatorios from './components/Relatorios';
-import NavigationBar from './components/Navbar';
-import Footer from './components/Footer';
+import Relatorios from './components/Relatorios/Relatorios';
+import NavigationBar from './components/navbar/Navbar';
+import Footer from './components/footer/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'; // Importe o arquivo CSS global
 
@@ -31,6 +31,7 @@ const App: React.FC = () => {
       <Router>
         <div className="app-container">
           <Routes>
+             <Route path="/" element={<Navigate to="/dashboard" />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route

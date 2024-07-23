@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
-import api from '../../services/api';
+import api from '../../../services/api';
 import './Register.css'; // Importe o arquivo CSS
 
 const Register: React.FC = () => {

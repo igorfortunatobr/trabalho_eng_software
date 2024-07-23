@@ -1,13 +1,23 @@
+const { Sequelize, Op } = require('sequelize');
 const Transacao = require('../../../model/transacao/modelTransacao');
-
-const {RelatorioStrategy} = require('../base/ReportStrategy');
+const { RelatorioStrategy } = require('../base/ReportStrategy');
 
 class ReportTransacoes extends RelatorioStrategy {
     async gerarRelatorio() {
         const whereClause = { idUsuario: this.userId };
 
         if (this.filtro) {
-            Object.assign(whereClause, this.filtro);
+            // Adicionar filtro de data se dataInicio e dataFim forem fornecidos
+            if (this.filtro.dataInicio && this.filtro.dataFim) {
+                whereClause.data = {
+                    [Op.between]: [
+                        Sequelize.fn('DATE', this.filtro.dataInicio),
+                        Sequelize.fn('DATE', this.filtro.dataFim)
+                    ]
+                };
+            }
+            if (this.filtro.tipoTransacao)
+                whereClause.tipo = this.filtro.tipoTransacao;
         }
 
         const transacoes = await Transacao.findAll({ where: whereClause });
@@ -36,4 +46,4 @@ class ReportTransacoes extends RelatorioStrategy {
     }
 }
 
-module.exports = {ReportTransacoes};
+module.exports = { ReportTransacoes };
