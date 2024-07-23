@@ -46,7 +46,7 @@ const Register: React.FC = () => {
             <img src="./logo.png" alt="JUBA Logo" className="navbar-logo" />
           </div>
           <h2>Assuma o controle de suas finanças de forma definitiva</h2>
-          <h1>Cuidar do seu dinheiro pode ser simples. Com o Mobills, você organiza e planeja sua vida financeira em um único lugar.</h1>
+          <h1>Cuidar do seu dinheiro pode ser simples. Com o Juba, você organiza e planeja sua vida financeira em um único lugar.</h1>
         </div>
         <div className="register-right d-flex flex-column align-items-center justify-content-center">
           <h2>Cadastrar uma nova conta</h2>
