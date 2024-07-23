@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Line, Pie, Bar } from 'react-chartjs-2';
-import api from '../services/api';
-import { Chart as ChartJS, ArcElement, LineElement, BarElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+import { Line, Pie } from 'react-chartjs-2';
+import api from '../../services/api';
+import { Chart as ChartJS, ArcElement, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Filler } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import useAlert from '../utils/useAlert';
-import Alert from './Alert';
+import useAlert from '../../utils/useAlert';
+import Alert from '../utils/Alert';
 
-ChartJS.register(ArcElement, LineElement, BarElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, ChartDataLabels);
+ChartJS.register(ArcElement, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Filler, ChartDataLabels);
 
 const Dashboard: React.FC = () => {
   const [receitasDespesasMensais, setReceitasDespesasMensais] = useState({ receitas: [], despesas: [] });
@@ -31,18 +31,16 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [
-    
-  ]);
+  }, []);
 
   const receitasDespesasChartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
     datasets: [
       {
         label: 'Receitas',
         data: receitasDespesasMensais.receitas,
         fill: true,
-        backgroundColor: 'rgba(54, 162, 235)', // Cor quase transparente
+        backgroundColor: 'rgba(54, 162, 235, 0.2)', // Cor quase transparente
         borderColor: '#36a2eb',
         tension: 0.4,
       },
@@ -50,7 +48,7 @@ const Dashboard: React.FC = () => {
         label: 'Despesas',
         data: receitasDespesasMensais.despesas,
         fill: true,
-        backgroundColor: 'rgba(255, 99, 132)', // Cor quase transparente
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // Cor quase transparente
         borderColor: '#ff6384',
         tension: 0.4,
       },
@@ -84,7 +82,18 @@ const Dashboard: React.FC = () => {
       datalabels: {
         color: '#fff',
         formatter: (value: number, context: any) => {
-          return context.chart.data.labels[context.dataIndex];
+          return value > 0 ? context.chart.data.labels[context.dataIndex] : '';
+        },
+      },
+    },
+  };
+
+  const categoriasQualitativoOptions = {
+    plugins: {
+      datalabels: {
+        color: '#fff',
+        formatter: (value: number, context: any) => {
+          return value > 0 ? context.chart.data.labels[context.dataIndex] : '';
         },
       },
     },
@@ -98,19 +107,23 @@ const Dashboard: React.FC = () => {
         <button className="btn btn-primary" onClick={fetchData}>Atualizar</button>
       </div>
       <div className="row">
-        <div className="col-md-12 mb-3">
-          <h3>Receitas vs Despesas (Mensal)</h3>
-          <Line data={receitasDespesasChartData} />
+        <div className="card">
+          <div className="col-md-12 mb-3">
+            <h3>Receitas vs Despesas (Mensal)</h3>
+            <Line data={receitasDespesasChartData} />
+          </div>
         </div>
       </div>
-      <div className='row'>
-        <div className="col-md-6 mb-3">
-          <h3>Transações por Categoria (Quantidade)</h3>
-          <Pie data={categoriasQuantitativoData} options={categoriasQuantitativoOptions} />
-        </div>
-        <div className="col-md-6 mb-3">
-          <h3>Transações por Categoria (Valor)</h3>
-          <Bar data={categoriasQualitativoData} />
+      <div className="card">
+        <div className='row justify-content-center'>
+          <div className="col-md-6 mb-3">
+            <h3>Transações por Categoria (Quantidade)</h3>
+            <Pie data={categoriasQuantitativoData} options={categoriasQuantitativoOptions} />
+          </div>
+          <div className="col-md-6 mb-3">
+            <h3>Transações por Categoria (Valor)</h3>
+            <Pie data={categoriasQualitativoData} options={categoriasQualitativoOptions} />
+          </div>
         </div>
       </div>
     </div>

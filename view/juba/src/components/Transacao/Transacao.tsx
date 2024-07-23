@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import TransacaoModal from './components/TransacaoModal';
 import TransacaoTable from './components/TransacaoTable';
-import Alert from '../Alert';
+import Alert from '../utils/Alert';
 import useAlert from '../../utils/useAlert';
 
 interface Transacao {

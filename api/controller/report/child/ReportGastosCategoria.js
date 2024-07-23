@@ -1,3 +1,4 @@
+const { Sequelize, Op } = require('sequelize');
 const CategoriaTransacao = require('../../../model/categoriaTransacao/modelCategoriaTransacao');
 const Transacao = require('../../../model/transacao/modelTransacao');
 const Categoria = require('../../../model/categoria/modelCategoria');
@@ -8,10 +9,19 @@ const {RelatorioStrategy} = require('../base/ReportStrategy');
 class ReportGastosCategoria extends RelatorioStrategy {
     async gerarRelatorio() {
         const whereClause = { '$transacao.idUsuario$': this.userId };
+        const whereClauseTransacao = {...whereClause};
+        
 
-        if (this.filtro) {
-            // Adicione lógica para processar os filtros aqui
-            Object.assign(whereClause, this.filtro);
+         if (this.filtro) {
+            // Adicionar filtro de data se dataInicio e dataFim forem fornecidos
+            if (this.filtro.dataInicio && this.filtro.dataFim) {
+                whereClauseTransacao.data = {
+                    [Op.between]: [
+                        Sequelize.fn('DATE', this.filtro.dataInicio),
+                        Sequelize.fn('DATE', this.filtro.dataFim)
+                    ],
+                };
+            }
         }
 
         const gastosPorCategoria = await CategoriaTransacao.findAll({
@@ -20,7 +30,7 @@ class ReportGastosCategoria extends RelatorioStrategy {
                     model: Transacao,
                     as: 'Transacao',
                     attributes: ['data', 'tipo'], // Campos que você deseja retornar
-                    where: whereClause
+                    where: whereClauseTransacao
                 },
                 {
                     model: Categoria,

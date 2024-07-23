@@ -3,7 +3,7 @@ import api from '../../services/api';
 import CategoriaModal from './components/CategoriaModal';
 import CategoriaTable from './components/CategoriaTable';
 import useAlert from '../../utils/useAlert';
-import Alert from '../Alert';
+import Alert from '../utils/Alert';
 
 interface Categoria {
   id: number;

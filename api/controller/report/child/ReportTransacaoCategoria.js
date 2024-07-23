@@ -1,3 +1,4 @@
+const { Sequelize, Op } = require('sequelize');
 const CategoriaTransacao = require('../../../model/categoriaTransacao/modelCategoriaTransacao');
 const Transacao = require('../../../model/transacao/modelTransacao');
 const Categoria = require('../../../model/categoria/modelCategoria');
@@ -7,8 +8,20 @@ const {RelatorioStrategy} = require('../base/ReportStrategy');
 class ReportTransacaoCategoria extends RelatorioStrategy {
     async gerarRelatorio() {
         const whereClause = { idUsuario: this.userId };
-
+        const whereClauseTransacao = {...whereClause};
         const categoriaId = this.filtro.idCategoria;
+
+        if (this.filtro) {
+            // Adicionar filtro de data se dataInicio e dataFim forem fornecidos
+            if (this.filtro.dataInicio && this.filtro.dataFim) {
+                whereClauseTransacao.data = {
+                    [Op.between]: [
+                        Sequelize.fn('DATE', this.filtro.dataInicio),
+                        Sequelize.fn('DATE', this.filtro.dataFim)
+                    ],
+                };
+            }
+        }
 
         const transacoesCategorias = await CategoriaTransacao.findAll({
             where: { idCategoria: categoriaId },
@@ -17,7 +30,7 @@ class ReportTransacaoCategoria extends RelatorioStrategy {
                     model: Transacao,
                     as: 'Transacao',
                     attributes: ['id', 'data', 'tipo', 'valor'], // Campos que você deseja retornar
-                    where: whereClause
+                    where: whereClauseTransacao
                 },
                 {
                     model: Categoria,
@@ -28,16 +41,15 @@ class ReportTransacaoCategoria extends RelatorioStrategy {
             ]
         });
 
+        console.log(transacoesCategorias)
+
         return this.gerarPDF(transacoesCategorias);
     }
 
     adicionarCorpo(doc, data) {
         // Verifique a estrutura dos dados
-        data.map(item => [
-            console.log(item.Transacao.dataValues.data)
-        ]);
 
-        this.subtitulo = `Trasações da categoria "${data[0].Categoria.dataValues.nome}"`;
+        this.subtitulo = data[0]?.Categoria ? `Trasações da categoria "${data[0]?.Categoria?.dataValues?.nome}"` : "Não foi encontrada nenhuma transação para a categoria selecionada.";
 
         const headers = ['Transação ID', 'Data', 'Valor (R$)'];
         const rows = data.map(item => [
