@@ -21,6 +21,7 @@
     "jsx": "react",
   },
   "include": [
+    "bkp",
     "src",
     "src/*",
     "src/**/*",

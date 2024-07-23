@@ -18,7 +18,7 @@ interface Transacao {
   id: number;
   idUsuario: number;
   data: string;
-  tipo: number;
+  tipo: string;
   valor: number;
   categorias: CategoriaTransacao[];
 }
@@ -42,7 +42,7 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
 }) => {
   const [valor, setValor] = useState('');
   const [data, setData] = useState('');
-  const [tipo, setTipo] = useState(1);
+  const [tipo, setTipo] = useState("1");
   const [categoriaTransacoes, setCategoriaTransacoes] = useState<CategoriaTransacao[]>([]);
   const [novaCategoriaId, setNovaCategoriaId] = useState('');
   const [novaCategoriaValor, setNovaCategoriaValor] = useState('');
@@ -72,7 +72,7 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
 
     try {
       if (selectedTransacao) {
-        await api.put(`/transacoes/${selectedTransacao.id}`, payload);
+        await api.put(`/transacoes/id/${selectedTransacao.id}`, payload);
         showAlert('Transação atualizada com sucesso', 'success');
       } else {
         await api.post('/transacoes', payload);
@@ -114,7 +114,7 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
   const resetForm = () => {
     setValor('');
     setData('');
-    setTipo(1);
+    setTipo("1");
     setCategoriaTransacoes([]);
   };
 
@@ -130,7 +130,9 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
             <Form.Control
               type="number"
               value={valor}
+              placeholder='0,00'
               readOnly
+              disabled
               required
             />
           </Form.Group>
@@ -150,17 +152,17 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
                 type="radio"
                 id="despesa"
                 label="Despesa"
-                value={1}
-                checked={tipo === 1}
-                onChange={() => setTipo(1)}
+                value={"1"}
+                checked={tipo === "1"}
+                onChange={() => setTipo("1")}
               />
               <Form.Check
                 type="radio"
                 id="receita"
                 label="Receita"
-                value={2}
-                checked={tipo === 2}
-                onChange={() => setTipo(2)}
+                value={"2"}
+                checked={tipo === "2"}
+                onChange={() => setTipo("2")}
               />
             </div>
           </Form.Group>
@@ -180,6 +182,7 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
             <Form.Label>Valor</Form.Label>
             <Form.Control
               type="number"
+              placeholder='0,00'
               value={novaCategoriaValor}
               onChange={e => setNovaCategoriaValor(e.target.value)}
               required

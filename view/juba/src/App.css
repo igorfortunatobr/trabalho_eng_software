@@ -1,4 +1,4 @@
-/* src/App.css */
+/* App.css */
 
 html, body, #root {
   height: 100%;
@@ -8,13 +8,17 @@ html, body, #root {
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
 
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  padding-top: 70px;
+}
+
+.navbar + .main-content {
   padding-top: 56px; /* Ajuste conforme a altura da sua navbar */
   padding-bottom: 40px; /* Ajuste conforme a altura do footer */
 }
@@ -25,4 +29,49 @@ body {
 
 .App-link {
   color: #61dafb;
+}
+
+.footer {
+  background-color: #e0e0e0;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+
+/* Estilos específicos para páginas de login e registro */
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.auth-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-footer {
+  margin-top: auto;
+}
+
+.card {
+  margin-bottom: 1rem;
+}
+
+.card-body {
+  text-align: center;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
