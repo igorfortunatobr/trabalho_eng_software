@@ -25,9 +25,10 @@ class ReportTransacoes extends RelatorioStrategy {
     }
 
     adicionarCorpo(doc, data) {
-        const headers = ['ID', 'Valor (R$)', 'Tipo', 'Data'];
+        const headers = ['ID', 'Descrição', 'Valor (R$)', 'Tipo', 'Data'];
         const rows = data.map(transacao => [
             transacao.id,
+            transacao.descricao,
             transacao.valor.toFixed(2),
             global.ENVIRONMENT.TRANSACTION_TYPES[transacao.tipo],
             global.UTILS.formatDateTime(transacao.data)
@@ -40,7 +41,7 @@ class ReportTransacoes extends RelatorioStrategy {
         }, 0);
 
         // Adicionar a linha do total ao final das linhas
-        rows.push(['Total:', total.toFixed(2), '', '']);
+        rows.push(['', 'Total:', total.toFixed(2), '', '']);
 
         this.desenharTabela(doc, headers, rows, 50, 150, 30);
     }

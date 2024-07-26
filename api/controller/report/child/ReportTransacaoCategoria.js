@@ -29,7 +29,7 @@ class ReportTransacaoCategoria extends RelatorioStrategy {
                 {
                     model: Transacao,
                     as: 'Transacao',
-                    attributes: ['id', 'data', 'tipo', 'valor'], // Campos que você deseja retornar
+                    attributes: ['id', 'descricao', 'data', 'tipo', 'valor'], // Campos que você deseja retornar
                     where: whereClauseTransacao
                 },
                 {
@@ -51,9 +51,10 @@ class ReportTransacaoCategoria extends RelatorioStrategy {
 
         this.subtitulo = data[0]?.Categoria ? `Trasações da categoria "${data[0]?.Categoria?.dataValues?.nome}"` : "Não foi encontrada nenhuma transação para a categoria selecionada.";
 
-        const headers = ['Transação ID', 'Data', 'Valor (R$)'];
+        const headers = ['Transação ID', 'Descrição', 'Data', 'Valor (R$)'];
         const rows = data.map(item => [
             item.Transacao ? item.Transacao.dataValues.id : 'N/A', // Protege contra undefined
+            item.Transacao ? item.Transacao.dataValues.descricao : 'N/A', // Protege contra undefined
             item.Transacao ? global.UTILS.formatDateTime(item.Transacao.dataValues.data) : 'N/A', // Protege contra undefined
             item.Transacao ? item.Transacao.dataValues.valor.toFixed(2) : 'N/A', // Protege contra undefined
         ]);
