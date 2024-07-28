@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Table } from 'react-bootstrap';
-import api from '../../../services/api';
-import { FaTrash } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form, Table } from "react-bootstrap";
+import api from "../../../services/api";
+import { FaTrash } from "react-icons/fa";
+import CustomAlert from "../../../components/CustomAlert/CustomAlert";
 
 interface Categoria {
   id: number;
@@ -20,6 +21,7 @@ interface Transacao {
   data: string;
   tipo: string;
   valor: number;
+  descricao: string;
   categorias: CategoriaTransacao[];
 }
 
@@ -29,40 +31,54 @@ interface TransacaoModalProps {
   loadTransacoes: () => void;
   categorias: Categoria[];
   selectedTransacao: Transacao | null;
-  showAlert: (message: string, variant: 'success' | 'danger' | 'warning' | 'info') => void;
+  showAlert: (
+    message: string,
+    variant: "success" | "danger" | "warning" | "info",
+  ) => void;
 }
 
-const TransacaoModal: React.FC<TransacaoModalProps> = ({
-  showModal,
-  handleHideModal,
-  loadTransacoes,
-  categorias,
-  selectedTransacao,
-  showAlert
-}) => {
+export default function TransacaoModal(props: TransacaoModalProps) {
+  const {
+    showModal,
+    handleHideModal,
+    loadTransacoes,
+    categorias,
+    selectedTransacao,
+    showAlert,
+  } = props;
+
   const getCurrentDate = () => {
     const today = new Date();
-    return today.toISOString().split('T')[0];
+    return today.toISOString().split("T")[0];
   };
 
-  const [valor, setValor] = useState('');
+  const [valor, setValor] = useState("");
   const [data, setData] = useState(getCurrentDate());
   const [tipo, setTipo] = useState("1");
-  const [categoriaTransacoes, setCategoriaTransacoes] = useState<CategoriaTransacao[]>([]);
-  const [novaCategoriaId, setNovaCategoriaId] = useState('');
-  const [novaCategoriaValor, setNovaCategoriaValor] = useState('');
-  
+  const [categoriaTransacoes, setCategoriaTransacoes] = useState<
+    CategoriaTransacao[]
+  >([]);
+  const [novaCategoriaId, setNovaCategoriaId] = useState("");
+  const [novaCategoriaValor, setNovaCategoriaValor] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [error, setError] = useState<{ show: boolean; message: string }>({
+    show: false,
+    message: "",
+  });
 
   useEffect(() => {
     if (selectedTransacao) {
       setValor(selectedTransacao.valor.toString());
-      setData(selectedTransacao.data.split('T')[0]); // Ajuste para exibir a data corretamente
+      setData(selectedTransacao.data.split("T")[0]); // Ajuste para exibir a data corretamente
       setTipo(selectedTransacao.tipo);
-      setCategoriaTransacoes(selectedTransacao.categorias.map(ct => ({
-        idCategoria: ct.idCategoria,
-        nome: ct.nome,
-        valor: ct.valor
-      })));
+      setDescricao(selectedTransacao.descricao);
+      setCategoriaTransacoes(
+        selectedTransacao.categorias.map(ct => ({
+          idCategoria: ct.idCategoria,
+          nome: ct.nome,
+          valor: ct.valor,
+        })),
+      );
     } else {
       resetForm();
     }
@@ -70,44 +86,58 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const transacaoPayload = { data, valor: parseFloat(valor), tipo };
+    const transacaoPayload = {
+      data,
+      valor: parseFloat(valor),
+      tipo,
+      descricao,
+    };
     const payload = {
       transacao: transacaoPayload,
-      categorias: categoriaTransacoes
+      categorias: categoriaTransacoes,
     };
+
+    if (categoriaTransacoes.length === 0) {
+      setError({ show: true, message: "Adicione ao menos uma categoria" });
+      return;
+    }
 
     try {
       if (selectedTransacao) {
         await api.put(`/transacoes/id/${selectedTransacao.id}`, payload);
-        showAlert('Transação atualizada com sucesso', 'success');
+        showAlert("Transação atualizada com sucesso", "success");
       } else {
-        await api.post('/transacoes', payload);
-        showAlert('Transação adicionada com sucesso', 'success');
+        await api.post("/transacoes", payload);
+        showAlert("Transação adicionada com sucesso", "success");
       }
 
       resetForm();
       handleHideModal();
       loadTransacoes();
     } catch (error) {
-      showAlert('Erro ao salvar transação', 'danger');
+      setError({ show: true, message: "Erro ao salvar transação" });
     }
   };
 
   const handleAddCategoria = () => {
     const novaCategoria: CategoriaTransacao = {
       idCategoria: novaCategoriaId,
-      nome: categorias.find((c: Categoria) => c.id === parseInt(novaCategoriaId))?.nome || '',
+      nome:
+        categorias.find((c: Categoria) => c.id === parseInt(novaCategoriaId))
+          ?.nome || "",
       valor: parseFloat(novaCategoriaValor),
     };
     const novasCategorias = [...categoriaTransacoes, novaCategoria];
     setCategoriaTransacoes(novasCategorias);
-    setNovaCategoriaId('');
-    setNovaCategoriaValor('');
+    setNovaCategoriaId("");
+    setNovaCategoriaValor("");
     atualizarValorTransacao(novasCategorias);
   };
 
   const handleRemoveCategoria = (idCategoria: string) => {
-    const novasCategorias = categoriaTransacoes.filter(ct => ct.idCategoria !== idCategoria);
+    const novasCategorias = categoriaTransacoes.filter(
+      ct => ct.idCategoria !== idCategoria,
+    );
     setCategoriaTransacoes(novasCategorias);
     atualizarValorTransacao(novasCategorias);
   };
@@ -118,32 +148,46 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
   };
 
   const resetForm = () => {
-    setValor('');
+    setValor("");
+    setDescricao("");
     setData(getCurrentDate());
     setTipo("1");
     setCategoriaTransacoes([]);
+    setError({ show: false, message: "" });
   };
 
   return (
     <Modal show={showModal} onHide={handleHideModal}>
       <Modal.Header closeButton>
-        <Modal.Title>{selectedTransacao ? 'Editar Transação' : 'Nova Transação'}</Modal.Title>
+        <Modal.Title>
+          {selectedTransacao ? "Editar Transação" : "Nova Transação"}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <CustomAlert message={error.message} type="danger" show={error.show} />
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="valor">
             <Form.Label>Valor</Form.Label>
+            <p className="ms-1 mb-0 d-inline-flex text-danger">*</p>
             <Form.Control
               type="number"
               value={valor}
-              placeholder='0,00'
+              placeholder="0,00"
               readOnly
               disabled
               required
             />
           </Form.Group>
+          <Form.Group controlId="descricao">
+            <Form.Label className="mt-3">Descrição</Form.Label>
+            <Form.Control
+              type="text"
+              value={descricao}
+              onChange={e => setDescricao(e.target.value)}
+            />
+          </Form.Group>
           <Form.Group controlId="data">
-            <Form.Label>Data</Form.Label>
+            <Form.Label className="mt-3">Data</Form.Label>
             <Form.Control
               type="date"
               value={data}
@@ -152,7 +196,7 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
             />
           </Form.Group>
           <Form.Group controlId="tipo">
-            <Form.Label>Tipo</Form.Label>
+            <Form.Label className="mt-3">Tipo</Form.Label>
             <div>
               <Form.Check
                 type="radio"
@@ -172,31 +216,40 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
               />
             </div>
           </Form.Group>
+          <h5 className="mt-4">Categorias</h5>
           <Form.Group controlId="novaCategoria">
-            <Form.Label>Adicionar Categoria</Form.Label>
             <Form.Control
               as="select"
               value={novaCategoriaId}
               onChange={e => setNovaCategoriaId(e.target.value)}
               required
+              className="custom-select mt-3"
             >
               <option value="">Selecione uma categoria</option>
               {categorias.map((categoria: Categoria) => (
-                <option key={categoria.id} value={categoria.id.toString()}>{categoria.nome}</option>
+                <option key={categoria.id} value={categoria.id.toString()}>
+                  {categoria.nome}
+                </option>
               ))}
             </Form.Control>
-            <Form.Label>Valor</Form.Label>
+            <Form.Label className="mt-3">Valor</Form.Label>
             <Form.Control
               type="number"
-              placeholder='0,00'
+              placeholder="0,00"
               value={novaCategoriaValor}
               onChange={e => setNovaCategoriaValor(e.target.value)}
               required
             />
-            <Button onClick={handleAddCategoria} className="mt-2">Adicionar Categoria</Button>
+            <Button
+              onClick={handleAddCategoria}
+              disabled={!novaCategoriaId || !novaCategoriaValor}
+              className="mt-3"
+            >
+              Adicionar Categoria
+            </Button>
           </Form.Group>
-          <h5 className="mt-4">Categorias</h5>
-          <Table striped bordered hover>
+
+          <Table striped bordered hover className="mt-3">
             <thead>
               <tr>
                 <th>Categoria</th>
@@ -205,17 +258,24 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
               </tr>
             </thead>
             <tbody>
-              {categoriaTransacoes.map((categoriaTransacao: CategoriaTransacao) => (
-                <tr key={categoriaTransacao.idCategoria}>
-                  <td>{categoriaTransacao.nome}</td>
-                  <td>{categoriaTransacao.valor}</td>
-                  <td>
-                    <Button variant="danger" onClick={() => handleRemoveCategoria(categoriaTransacao.idCategoria)}>
-                      <FaTrash />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {categoriaTransacoes.map(
+                (categoriaTransacao: CategoriaTransacao) => (
+                  <tr key={categoriaTransacao.idCategoria}>
+                    <td>{categoriaTransacao.nome}</td>
+                    <td>{categoriaTransacao.valor}</td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        onClick={() =>
+                          handleRemoveCategoria(categoriaTransacao.idCategoria)
+                        }
+                      >
+                        <FaTrash />
+                      </Button>
+                    </td>
+                  </tr>
+                ),
+              )}
             </tbody>
           </Table>
         </Form>
@@ -230,6 +290,4 @@ const TransacaoModal: React.FC<TransacaoModalProps> = ({
       </Modal.Footer>
     </Modal>
   );
-};
-
-export default TransacaoModal;
+}
