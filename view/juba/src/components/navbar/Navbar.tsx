@@ -1,33 +1,54 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Navbar, Nav, Container } from 'react-bootstrap';
-import { useAuth } from '../../context/AuthContext';
-import './NavigationBar.css'; // Importe o arquivo CSS
+import React from "react";
+import { Link } from "react-router-dom";
+import { Navbar, Nav, Container } from "react-bootstrap";
+import { useAuth } from "../../context/AuthContext";
+import { BsGraphUpArrow } from "react-icons/bs";
+import { CiShoppingTag } from "react-icons/ci";
+import { TbArrowsTransferDown } from "react-icons/tb";
+import { BsFileEarmarkRuled } from "react-icons/bs";
+import "./NavigationBar.css"; // Importe o arquivo CSS
 
-const NavigationBar: React.FC = () => {
+export default function NavigationBar() {
   const { isAuthenticated, logout } = useAuth();
 
   return (
-    <Navbar expand="lg" fixed="top" className="custom-navbar">
+    <Navbar expand="lg" className="custom-navbar">
       <Container>
-        <Navbar.Brand as={Link} to="/dashboard" className="d-flex align-items-center">
-          <img src="./logo.png" alt="JUBA Logo" className="navbar-logo" /> {/* Substitua /path/to/logo.png pelo caminho real da sua logo */}
+        <Navbar.Brand
+          as={Link}
+          to="/dashboard"
+          className="d-flex align-items-center"
+        >
+          <img src="./logo.png" alt="JUBA Logo" className="navbar-logo" />{" "}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto">
             {isAuthenticated ? (
               <>
-                <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
-                <Nav.Link as={Link} to="/categorias">Categorias</Nav.Link>
-                <Nav.Link as={Link} to="/transacoes">Transações</Nav.Link>
-                <Nav.Link as={Link} to="/relatorios">Relatório</Nav.Link>
+                <Nav.Link as={Link} to="/dashboard">
+                  <BsGraphUpArrow className="mb-1 me-1" /> Dashboard
+                </Nav.Link>
+                <Nav.Link as={Link} to="/categorias">
+                  <CiShoppingTag className="mb-1" size={20} /> Categorias
+                </Nav.Link>
+                <Nav.Link as={Link} to="/transacoes">
+                  <TbArrowsTransferDown className="mb-1" /> Transações
+                </Nav.Link>
+                <Nav.Link as={Link} to="/relatorios">
+                  <BsFileEarmarkRuled className="me-1 mb-1" />
+                  Relatórios
+                </Nav.Link>
                 <Nav.Link onClick={logout}>Sair</Nav.Link>
               </>
             ) : (
               <>
-                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                <Nav.Link as={Link} to="/register">Registro</Nav.Link>
+                <Nav.Link as={Link} to="/login">
+                  Login
+                </Nav.Link>
+                <Nav.Link as={Link} to="/register">
+                  Registro
+                </Nav.Link>
               </>
             )}
           </Nav>
@@ -35,6 +56,4 @@ const NavigationBar: React.FC = () => {
       </Container>
     </Navbar>
   );
-};
-
-export default NavigationBar;
+}

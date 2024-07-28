@@ -1,13 +1,10 @@
 // src/components/Footer.tsx
-import React from 'react';
-import './Footer.css';
+import React from "react";
 
-const Footer: React.FC = () => {
+export default function Footer() {
   return (
-    <footer className="footer">
+    <div className="bg-gray mt-5 d-flex justify-content-center p-3">
       © 2024 Direitos Reservados | Juba - Gestão Financeira
-    </footer>
+    </div>
   );
-};
-
-export default Footer;
+}
