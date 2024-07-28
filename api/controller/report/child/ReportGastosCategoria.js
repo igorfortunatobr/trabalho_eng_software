@@ -1,4 +1,4 @@
-const { Sequelize, Op } = require('sequelize');
+const { Sequelize, Op, EmptyResultError } = require('sequelize');
 const CategoriaTransacao = require('../../../model/categoriaTransacao/modelCategoriaTransacao');
 const Transacao = require('../../../model/transacao/modelTransacao');
 const Categoria = require('../../../model/categoria/modelCategoria');
@@ -45,6 +45,10 @@ class ReportGastosCategoria extends RelatorioStrategy {
             where: whereClause,
             group: ['idCategoria']
         });
+
+        if (!gastosPorCategoria?.length)
+            throw new EmptyResultError("Nenhum dado encontrado.")
+
         return this.gerarPDF(gastosPorCategoria);
     }
 
