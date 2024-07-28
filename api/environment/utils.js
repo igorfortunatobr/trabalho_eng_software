@@ -1,4 +1,4 @@
-const { ValidationError, ForeignKeyConstraintError } = require('sequelize');
+const { ValidationError, ForeignKeyConstraintError, EmptyResultError } = require('sequelize');
 
 const handleSequelizeError = (error, res) => {
   console.error(error);
@@ -7,6 +7,8 @@ const handleSequelizeError = (error, res) => {
     return res.status(400).json({ message: 'Erro de chave estrangeira. Verifique as dependências.' });
   } else if (error instanceof ValidationError) {
     return res.status(400).json({ message: 'Erro de validação. Verifique os dados enviados.' });
+  } else if (error instanceof EmptyResultError) {
+    return res.status(400).json({ message: 'Nenhum registro identificado.' });
   } else {
     return res.status(500).json({ message: 'Erro interno do servidor.' });
   }

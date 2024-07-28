@@ -41,7 +41,8 @@ class ReportTransacaoCategoria extends RelatorioStrategy {
             ]
         });
 
-        console.log(transacoesCategorias)
+        if (!transacoesCategorias?.length)
+            throw new EmptyResultError("Nenhum dado encontrado.")
 
         return this.gerarPDF(transacoesCategorias);
     }
