@@ -73,7 +73,7 @@ export default function TransacaoCRUD() {
 
   const handleDelete = async (id: number) => {
     try {
-      await api.delete(`/transacoes/${id}`);
+      await api.delete(`/transacoes/id/${id}`);
       loadTransacoes();
     } catch (error) {
       showAlert("Erro ao excluir transação", "danger");
@@ -147,7 +147,9 @@ export default function TransacaoCRUD() {
               <div className="card-body">
                 <h5 className="card-title">Saldo</h5>
                 <p
-                  className={`card-text ${calcularSaldo() > 0 ? "text-success" : "text-danger"}`}
+                  className={`card-text ${
+                    calcularSaldo() > 0 ? "text-success" : "text-danger"
+                  }`}
                 >
                   {formatToCoin(calcularSaldo())}
                 </p>
