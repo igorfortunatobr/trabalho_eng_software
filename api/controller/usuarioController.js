@@ -32,10 +32,10 @@ router.post('/register', async (req, res) => {
 router.put('/', verificarToken, async (req, res) => {
     try {
       const { id } = req.userId; // ID do usuário autenticado
-      const { nome, email } = req.body;
+      const { nome } = req.body;
       
       // Atualizar os dados do usuário
-      await Usuario.update({ nome, email }, { where: { id } });
+      await Usuario.update({ nome }, { where: { id } });
       res.sendStatus(204);
     } catch (error) {
       console.error(error);
