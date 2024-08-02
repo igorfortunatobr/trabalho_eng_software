@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, Container, Dropdown } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import { BsGraphUpArrow } from "react-icons/bs";
 import { CiShoppingTag } from "react-icons/ci";
@@ -9,7 +9,7 @@ import { BsFileEarmarkRuled } from "react-icons/bs";
 import "./NavigationBar.css"; // Importe o arquivo CSS
 
 export default function NavigationBar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth(); // Assumindo que `user` contém informações do usuário
 
   return (
     <Navbar expand="lg" className="custom-navbar">
@@ -39,7 +39,6 @@ export default function NavigationBar() {
                   <BsFileEarmarkRuled className="me-1 mb-1" />
                   Relatórios
                 </Nav.Link>
-                <Nav.Link onClick={logout}>Sair</Nav.Link>
               </>
             ) : (
               <>
@@ -52,6 +51,23 @@ export default function NavigationBar() {
               </>
             )}
           </Nav>
+
+          <Dropdown title={"Usuário"} id="basic-nav-dropdown">
+            <Dropdown.Toggle
+              className="d-flex align-items-center"
+              variant="light"
+              id="dropdown-basic"
+            >
+              <p className="mb-0 me-2 d-flex">Usuário</p>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item as={Link} to="/usuario">
+                Perfil
+              </Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item onClick={logout}>Sair</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </Navbar.Collapse>
       </Container>
     </Navbar>
