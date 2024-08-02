@@ -1,4 +1,4 @@
-const { Sequelize, Op } = require('sequelize');
+const { Sequelize, Op, EmptyResultError } = require('sequelize');
 const Transacao = require('../../../model/transacao/modelTransacao');
 const { RelatorioStrategy } = require('../base/ReportStrategy');
 
