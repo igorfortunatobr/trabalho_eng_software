@@ -22,7 +22,7 @@ class ReportTransacoes extends RelatorioStrategy {
 
         const transacoes = await Transacao.findAll({ where: whereClause });
 
-        if (!Transacao?.length)
+        if (!transacoes?.length)
             throw new EmptyResultError("Nenhum dado encontrado.")
 
         return this.gerarPDF(transacoes);
