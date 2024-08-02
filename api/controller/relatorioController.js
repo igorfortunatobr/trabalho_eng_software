@@ -30,8 +30,6 @@ router.post('/', async (req, res) => {
     
         const relatorioBase64 = await strategy.gerarRelatorio();
 
-        const relatorioData = {pdfBase64: relatorioBase64}
-
         res.status(200).json(relatorioBase64);
 
     } catch (error) {
