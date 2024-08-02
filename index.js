@@ -48,7 +48,7 @@ app.use((err, req, res, next) => {
 // Middleware para analisar corpos de solicitação JSON
 app.use(express.json());
 
-// Rotas publicas
+// Rotas de usuário
 app.use('/usuarios', usuarioController);
 
 // Rotas de autenticação

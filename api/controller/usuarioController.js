@@ -33,11 +33,6 @@ router.put('/', verificarToken, async (req, res) => {
     try {
       const { id } = req.userId; // ID do usuário autenticado
       const { nome, email } = req.body;
-  
-      // Verificar se o usuário está tentando editar a si mesmo
-      if (req.params.id !== id.toString()) {
-        return res.status(403).json({ message: 'Você só pode editar seu próprio perfil' });
-      }
       
       // Atualizar os dados do usuário
       await Usuario.update({ nome, email }, { where: { id } });
@@ -48,16 +43,36 @@ router.put('/', verificarToken, async (req, res) => {
     }
 });
 
-/*router.get('/', async (req, res) => {
+// Atualização do usuário
+router.put('/password', verificarToken, async (req, res) => {
     try {
-    const usuarios = await Usuario.findAll({
-        attributes: { exclude: ['senha'] }
-        });
-    res.json(usuarios);
+      const userId = req.userId;
+      const { senha } = req.body;
+
+      // Criptografar a senha
+      const hashedSenha = await bcrypt.hash(senha, 10);
+      
+      // Atualizar os dados do usuário
+      await Usuario.update({ senha: hashedSenha }, { where: { id: userId } });
+      res.sendStatus(204);
     } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+      console.error(error);
+      res.status(500).json({ message: 'Erro interno do servidor' });
     }
-});*/
+});
+
+router.get('/', verificarToken, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const usuarios = await Usuario.findOne({
+            where: { id: userId },
+            attributes: { exclude: ['senha'] }
+        });
+        res.json(usuarios);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+});
 
 module.exports = router;
