@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { LuRefreshCcw } from "react-icons/lu";
 import { Line, Pie } from "react-chartjs-2";
 import api from "../../services/api";
@@ -18,6 +18,7 @@ import useAlert from "../../utils/useAlert";
 import Alert from "../../components/utils/Alert";
 import Template from "../../components/Template/Template";
 import { Button, Col, Row } from "react-bootstrap";
+import { Context } from "chartjs-plugin-datalabels";
 
 ChartJS.register(
   ArcElement,
@@ -31,6 +32,16 @@ ChartJS.register(
   ChartDataLabels,
 );
 
+interface TransacaoQuantidade {
+  nome: string;
+  quantidade: number;
+}
+
+interface TransacaoValor {
+  nome: string;
+  valor: number;
+}
+
 export default function Dashboard() {
   const [receitasDespesasMensais, setReceitasDespesasMensais] = useState({
     receitas: [],
@@ -40,26 +51,59 @@ export default function Dashboard() {
   const [valorTransacoesData, setValorTransacoesData] = useState([]);
   const { alert, showAlert, hideAlert } = useAlert();
 
+  const prevReceitasDespesasMensais = useRef([]);
+  const prevQuantidadeTransacoesData = useRef([]);
+  const prevValorTransacoesData = useRef([]);
+
   const fetchData = useCallback(async () => {
     try {
-      const receitasDespesasResponse = await api.get(
-        "/transacoes/relacao-receitas-despesas-mensal",
-      );
-      setReceitasDespesasMensais(receitasDespesasResponse.data);
+      const [
+        receitasDespesasResponse,
+        quantidadeTransacoesResponse,
+        valorTransacoesResponse,
+      ] = await Promise.all([
+        api.get("/transacoes/relacao-receitas-despesas-mensal"),
+        api.get("/transacoes/quantidade-transacoes-categoria"),
+        api.get("/transacoes/valor-total-transacoes-categoria"),
+      ]);
 
-      const quantidadeTransacoesResponse = await api.get(
-        "/transacoes/quantidade-transacoes-categoria",
-      );
-      setQuantidadeTransacoesData(quantidadeTransacoesResponse.data);
+      const newReceitasDespesasMensais = receitasDespesasResponse.data;
+      const newQuantidadeTransacoesData = quantidadeTransacoesResponse.data;
+      const newValorTransacoesData = valorTransacoesResponse.data;
 
-      const valorTransacoesResponse = await api.get(
-        "/transacoes/valor-total-transacoes-categoria",
-      );
-      setValorTransacoesData(valorTransacoesResponse.data);
+      // Comparar os dados novos com os antigos
+      if (
+        JSON.stringify(newReceitasDespesasMensais) !==
+        JSON.stringify(prevReceitasDespesasMensais.current)
+      ) {
+        setReceitasDespesasMensais(newReceitasDespesasMensais);
+        prevReceitasDespesasMensais.current = newReceitasDespesasMensais;
+      }
+      if (
+        JSON.stringify(newQuantidadeTransacoesData) !==
+        JSON.stringify(prevQuantidadeTransacoesData.current)
+      ) {
+        setQuantidadeTransacoesData(newQuantidadeTransacoesData);
+        prevQuantidadeTransacoesData.current = newQuantidadeTransacoesData;
+      }
+      if (
+        JSON.stringify(newValorTransacoesData) !==
+        JSON.stringify(prevValorTransacoesData.current)
+      ) {
+        setValorTransacoesData(newValorTransacoesData);
+        prevValorTransacoesData.current = newValorTransacoesData;
+      }
     } catch (error) {
       showAlert("Erro ao carregar dados do dashboard", "danger");
     }
   }, [showAlert]);
+
+  useEffect(() => {
+    fetchData();
+    const intervalId = setInterval(fetchData, 1 * 60 * 1000);
+
+    return () => clearInterval(intervalId);
+  }, [fetchData]);
 
   useEffect(() => {
     fetchData();
@@ -101,11 +145,15 @@ export default function Dashboard() {
   };
 
   const categoriasQuantitativoData = {
-    labels: quantidadeTransacoesData.map((cat: any) => cat.nome),
+    labels: quantidadeTransacoesData.map(
+      (cat: TransacaoQuantidade) => cat.nome,
+    ),
     datasets: [
       {
         label: "Quantidade de Transações",
-        data: quantidadeTransacoesData.map((cat: any) => cat.quantidade),
+        data: quantidadeTransacoesData.map(
+          (cat: TransacaoQuantidade) => cat.quantidade,
+        ),
         backgroundColor: quantidadeTransacoesData.map(
           (_, i) => `hsl(${(i * 30) % 360}, 70%, 50%)`,
         ),
@@ -114,11 +162,11 @@ export default function Dashboard() {
   };
 
   const categoriasQualitativoData = {
-    labels: valorTransacoesData.map((cat: any) => cat.nome),
+    labels: valorTransacoesData.map((cat: TransacaoValor) => cat.nome),
     datasets: [
       {
         label: "Valor Total em R$",
-        data: valorTransacoesData.map((cat: any) => cat.valor),
+        data: valorTransacoesData.map((cat: TransacaoValor) => cat.valor),
         backgroundColor: valorTransacoesData.map(
           (_, i) => `hsl(${(i * 30) % 360}, 70%, 50%)`,
         ),
@@ -130,8 +178,12 @@ export default function Dashboard() {
     plugins: {
       datalabels: {
         color: "#fff",
-        formatter: (value: number, context: any) => {
-          return value > 0 ? context.chart.data.labels[context.dataIndex] : "";
+        formatter: (value: number, context: Context) => {
+          return value > 0
+            ? context.chart.data.labels
+              ? context.chart.data.labels[context.dataIndex]
+              : null
+            : "";
         },
       },
     },
@@ -141,8 +193,12 @@ export default function Dashboard() {
     plugins: {
       datalabels: {
         color: "#fff",
-        formatter: (value: number, context: any) => {
-          return value > 0 ? context.chart.data.labels[context.dataIndex] : "";
+        formatter: (value: number, context: Context) => {
+          return value > 0
+            ? context.chart.data.labels
+              ? context.chart.data.labels[context.dataIndex]
+              : null
+            : "";
         },
       },
     },

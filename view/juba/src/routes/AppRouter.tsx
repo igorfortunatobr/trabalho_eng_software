@@ -12,6 +12,7 @@ import CategoriaCRUD from "../pages/Categoria/Categoria";
 import TransacaoCRUD from "../pages/Transacao/Transacao";
 import Relatorios from "../pages/Relatorios/Relatorios";
 import { useAuth } from "../context/AuthContext";
+import Usuario from "../pages/Usuario/Usuario";
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -41,6 +42,10 @@ export default function AppRouter() {
           <Route
             path="/relatorios"
             element={isAuthenticated ? <Relatorios /> : <Login />}
+          />
+          <Route
+            path="/usuario"
+            element={isAuthenticated ? <Usuario /> : <Login />}
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
