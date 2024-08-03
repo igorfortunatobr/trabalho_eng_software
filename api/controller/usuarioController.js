@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
 // Atualização do usuário
 router.put('/', verificarToken, async (req, res) => {
     try {
-      const { id } = req.userId; // ID do usuário autenticado
+      const id  = req.userId; // ID do usuário autenticado
       const { nome } = req.body;
       
       // Atualizar os dados do usuário
