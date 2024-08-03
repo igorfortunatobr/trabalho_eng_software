@@ -2,38 +2,98 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
 import Template from "../../components/Template/Template";
 import { FaUser } from "react-icons/fa";
+import api from "../../services/api";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
 interface User {
-  name: string;
+  nome: string;
   email: string;
+  id: number;
 }
 
 export default function Usuario() {
-  const user = {
-    name: "Ayron",
-    lastName: "Sanfra",
-    email: "ayron.email@gmail.com",
-  };
-  const [editMode, setEditMode] = useState(true);
-  const [userData, setUserData] = useState({
-    name: "",
-    lastName: "",
+  const [editMode, setEditMode] = useState(false);
+  const [editPassword, setEditPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [alert, setAlert] = useState<{
+    show: boolean;
+    message: string;
+    type: string;
+  }>({
+    show: false,
+    message: "",
+    type: "",
+  });
+  const [userData, setUserData] = useState<User>({
+    nome: "",
     email: "",
+    id: 0,
   });
 
-  function updateUser(data: User) {
-    console.log("Atualizando usuário", data);
+  async function fetchUserData() {
+    try {
+      const response = await api.get("/usuarios");
+      setUserData({
+        email: response?.data?.email,
+        nome: response?.data?.nome,
+        id: response?.data?.id,
+      });
+    } catch (error) {
+      console.error("Erro ao buscar dados do usuário", error);
+    }
+  }
+
+  async function updateUser() {
+    try {
+      await api.put(`/usuarios`, { nome: userData.nome });
+      setAlert({
+        show: true,
+        message: "Dados atualizados com sucesso",
+        type: "success",
+      });
+      setEditMode(false);
+    } catch (error) {
+      console.error("Erro ao atualizar dados do usuário", error);
+      setAlert({
+        show: true,
+        message: "Erro ao atualizar dados",
+        type: "danger",
+      });
+    }
+  }
+
+  async function updatePassword() {
+    if (password !== confirmPassword) {
+      setAlert({
+        show: true,
+        message: "As senhas não coincidem",
+        type: "danger",
+      });
+      return;
+    }
+    try {
+      await api.put(`/usuarios/password`, { senha: password });
+      setAlert({
+        show: true,
+        message: "Senha atualizada com sucesso",
+        type: "success",
+      });
+      setEditPassword(false);
+      setEditMode(false);
+    } catch (error) {
+      console.error("Erro ao atualizar senha do usuário", error);
+      setAlert({
+        show: true,
+        message: "Erro ao atualizar senha",
+        type: "danger",
+      });
+    }
   }
 
   useEffect(() => {
-    if (user) {
-      setUserData({
-        name: user.name,
-        email: user.email,
-        lastName: user.lastName,
-      });
-    }
-  }, [user]);
+    fetchUserData();
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,13 +105,15 @@ export default function Usuario() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateUser(userData);
+    updateUser();
+    fetchUserData();
     setEditMode(false);
   };
 
   const handleEditMode = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setEditMode(true);
+    setAlert({ show: false, message: "", type: "" });
   };
 
   return (
@@ -63,53 +125,125 @@ export default function Usuario() {
               <Card.Body>
                 <Card.Title>{"Perfil do Usuário"}</Card.Title>
                 <FaUser size={100} className="d-block mx-auto my-5" />
+                <CustomAlert
+                  show={alert.show}
+                  message={alert.message}
+                  type={alert.type}
+                />
                 <Form className="text-start" onSubmit={handleSubmit}>
-                  <Form.Group controlId="formName" className="mb-3">
-                    <Form.Label className="text-start">Nome</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      value={userData.name}
-                      onChange={handleChange}
-                      readOnly={!editMode}
-                      disabled={!editMode}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="formLastName" className="mb-3">
-                    <Form.Label className="text-start">Sobrenome</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="lastName"
-                      value={userData.lastName}
-                      onChange={handleChange}
-                      readOnly={!editMode}
-                      disabled={!editMode}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="formEmail" className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      value={userData.email}
-                      onChange={handleChange}
-                      readOnly={!editMode}
-                      disabled={!editMode}
-                    />
-                  </Form.Group>
+                  {editPassword ? (
+                    <>
+                      <Form.Group controlId="formPassword" className="mb-3">
+                        <Form.Label className="text-start">
+                          Nova senha
+                        </Form.Label>
+                        <Form.Control
+                          type="password"
+                          name="password"
+                          value={password}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            setPassword(e.target.value);
+                          }}
+                        />
+                      </Form.Group>
+                      <Form.Group controlId="formPassword" className="mb-3">
+                        <Form.Label className="text-start">
+                          Confirme a nova
+                        </Form.Label>
+                        <Form.Control
+                          type="password"
+                          name="confirmPassword"
+                          value={confirmPassword}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            setConfirmPassword(e.target.value);
+                          }}
+                        />
+                      </Form.Group>
+                    </>
+                  ) : (
+                    <>
+                      <Form.Group controlId="formName" className="mb-3">
+                        <Form.Label className="text-start">Nome</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="nome"
+                          value={userData.nome}
+                          onChange={handleChange}
+                          readOnly={!editMode}
+                          disabled={!editMode}
+                        />
+                      </Form.Group>
+                      <Form.Group controlId="formEmail" className="mb-3">
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                          type="email"
+                          name="email"
+                          value={userData.email}
+                          readOnly
+                          disabled
+                        />
+                      </Form.Group>
+                    </>
+                  )}
                   <div className="d-flex justify-content-center mt-4">
-                    {editMode ? (
-                      <Button variant="primary" type="submit">
-                        Salvar
-                      </Button>
+                    {editPassword ? (
+                      <>
+                        <Button
+                          variant="secondary"
+                          className="me-5"
+                          onClick={() => {
+                            setEditPassword(false);
+                            setAlert({ show: false, message: "", type: "" });
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          variant="primary"
+                          onClick={() => updatePassword()}
+                        >
+                          Salvar nova senha
+                        </Button>
+                      </>
+                    ) : editMode ? (
+                      <>
+                        <Button
+                          className="me-5"
+                          variant="secondary"
+                          onClick={() => {
+                            setEditMode(false);
+                            setAlert({ show: false, message: "", type: "" });
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+
+                        <Button variant="primary" onClick={() => updateUser()}>
+                          Salvar
+                        </Button>
+                      </>
                     ) : (
-                      <Button
-                        className="text-end"
-                        variant="warning"
-                        onClick={handleEditMode}
-                      >
-                        Editar
-                      </Button>
+                      <>
+                        <Button
+                          className="text-end"
+                          variant="warning"
+                          onClick={handleEditMode}
+                        >
+                          Editar
+                        </Button>
+                        <Button
+                          className="ms-5"
+                          variant="secondary"
+                          onClick={() => {
+                            setEditPassword(true);
+                            setAlert({ show: false, message: "", type: "" });
+                            setPassword("");
+                            setConfirmPassword("");
+                          }}
+                        >
+                          Aterar senha
+                        </Button>
+                      </>
                     )}
                   </div>
                 </Form>
