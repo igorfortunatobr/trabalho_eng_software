@@ -284,7 +284,7 @@ router.get('/id/:id', async (req, res) => {
     });
 
     if (!transacao) {
-      return res.status(404).json({ error: 'Transação não encontrada' });
+      return res.status(404).json({ message: 'Transação não encontrada' });
     }
 
     // Buscar as categorias associadas à transação

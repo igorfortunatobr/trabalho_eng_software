@@ -27,14 +27,6 @@ router.put('/:id', async (req, res) => {
     // Iniciar uma transação
     transaction = await sequelize.transaction();
 
-    // Verificar se a transação pertence ao usuário autenticado
-    const categoria = await Categoria.findOne({ where: { id: categoriaId, idUsuario: userId } });
-
-    if (!categoria) {
-      await transaction.rollback();
-      return res.status(403).json({ message: 'Você só pode editar suas próprias categorias.' });
-    }
-
     // Atualizar os dados da categoria
     await Categoria.update(categoriaData, { where: { id: categoriaId, idUsuario: userId }, transaction });
 
@@ -67,12 +59,6 @@ router.delete("/:id", async (req, res) => {
   try {
     const userId = req.userId; // Obtém o ID do usuário autenticado
     const categoriaId = req.params.id;
-
-    // Verificar se a transação pertence ao usuário
-    const categoria = await Categoria.findOne({ where: { id: categoriaId, idUsuario: userId } });
-    if (!categoria) {
-      return res.status(403).json({ message: 'Você só pode excluir suas próprias categorias' });
-    }
 
     await Categoria.destroy({ where: { id: categoriaId, idUsuario: userId } });
 

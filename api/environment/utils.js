@@ -10,7 +10,7 @@ const handleSequelizeError = (error, res) => {
   } else if (error instanceof EmptyResultError) {
     return res.status(400).json({ message: 'Nenhum registro identificado.' });
   } else {
-    return res.status(500).json({ message: 'Erro interno do servidor.' });
+    return res.status(500).json({ message: error?.errorMessage || error?.message ? error.errorMessage || error?.message : 'Erro interno do servidor.' });
   }
 };
 

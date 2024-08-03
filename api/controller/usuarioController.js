@@ -10,6 +10,17 @@ router.post('/register', async (req, res) => {
     try {
         const { nome, email, senha } = req.body;
 
+        if (!nome || !email || !senha)
+            throw {errorMessage: "Existem informações que não foram preenchidas."};
+
+        const user = await Usuario.findOne({
+            where: { email: email.toLowerCase().trim() },
+            attributes: { exclude: ['senha'] }
+        });
+
+        if (user || user?.length)
+            throw {errorMessage: "Já existe um usuário registrado com este e-mail."}
+
         // Criptografar a senha
         const hashedSenha = await bcrypt.hash(senha, 10);
 
@@ -23,8 +34,7 @@ router.post('/register', async (req, res) => {
         delete usuario.dataValues.senha;
         res.status(201).json(usuario);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erro interno do servidor' });
+        global.UTILS.handleSequelizeError(error, res);
     }
 });
 
@@ -38,8 +48,7 @@ router.put('/', verificarToken, async (req, res) => {
       await Usuario.update({ nome }, { where: { id } });
       res.sendStatus(204);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Erro interno do servidor' });
+      global.UTILS.handleSequelizeError(error, res);
     }
 });
 
@@ -56,8 +65,7 @@ router.put('/password', verificarToken, async (req, res) => {
       await Usuario.update({ senha: hashedSenha }, { where: { id: userId } });
       res.sendStatus(204);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Erro interno do servidor' });
+      global.UTILS.handleSequelizeError(error, res);
     }
 });
 
@@ -70,8 +78,7 @@ router.get('/', verificarToken, async (req, res) => {
         });
         res.json(usuarios);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erro interno do servidor' });
+        global.UTILS.handleSequelizeError(error, res);
     }
 });
 
