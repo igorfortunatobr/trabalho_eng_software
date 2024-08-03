@@ -7,9 +7,24 @@ import { CiShoppingTag } from "react-icons/ci";
 import { TbArrowsTransferDown } from "react-icons/tb";
 import { BsFileEarmarkRuled } from "react-icons/bs";
 import "./NavigationBar.css"; // Importe o arquivo CSS
+import api from "../../services/api";
 
 export default function NavigationBar() {
-  const { isAuthenticated, logout } = useAuth(); // Assumindo que `user` contém informações do usuário
+  const { isAuthenticated, logout } = useAuth();
+  const [name, setName] = React.useState("");
+
+  async function fetchUserData() {
+    try {
+      const response = await api.get("/usuarios");
+      setName(response?.data?.nome);
+    } catch (error) {
+      console.error("Erro ao buscar dados do usuário", error);
+    }
+  }
+
+  React.useEffect(() => {
+    fetchUserData();
+  }, []);
 
   return (
     <Navbar expand="lg" className="custom-navbar">
@@ -58,7 +73,7 @@ export default function NavigationBar() {
               variant="light"
               id="dropdown-basic"
             >
-              <p className="mb-0 me-2 d-flex">Usuário</p>
+              <p className="mb-0 me-2 d-flex">{name}</p>
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item as={Link} to="/usuario">

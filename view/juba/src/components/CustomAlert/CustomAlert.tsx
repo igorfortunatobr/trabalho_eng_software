@@ -5,7 +5,7 @@ import { MdError, MdWarning } from "react-icons/md";
 
 interface CustomAlertProps {
   message: string;
-  type: "success" | "danger" | "warning";
+  type: string;
   show: boolean;
 }
 
