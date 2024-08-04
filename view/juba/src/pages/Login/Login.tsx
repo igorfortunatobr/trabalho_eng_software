@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import "./Login.css"; // Importe seu arquivo CSS
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import { isDesktop } from "../../utils/isDesktop";
+import IsDesktop from "../../utils/isDesktop";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,6 +16,7 @@ export default function Login() {
   });
   const navigate = useNavigate();
   const { login } = useAuth();
+  const desktop = IsDesktop();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -37,20 +38,22 @@ export default function Login() {
   return (
     <div className="login-container">
       <Container>
-        <Col>
+        <Col lg={12} xl={12}>
           <Row className="d-flex justify-content-center py-4">
             <img src="./logo.png" alt="JUBA Logo" className="w-25" />
           </Row>
           <Row className="s-flex justify-content-center mb-5">
             <Card
-              className={`${isDesktop ? "w-25" : "w-50"} rounded-4 mt-3 mb-5`}
+              className={`rounded-4 mt-3 mb-5 ${!desktop ? "w-25" : "w50"}`}
             >
               <Card.Body>
                 <Card.Title>Login</Card.Title>
                 <CustomAlert
                   message={error.message}
+                  dismissible
                   type="danger"
                   show={error.show}
+                  onClose={() => setError({ show: false, message: "" })}
                 />
                 <Form>
                   <Form.Group className="mb-3" controlId="formBasicEmail">

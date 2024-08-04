@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import api from "../../../services/api";
-import Alert from "../../../components/utils/Alert";
-import useAlert from "../../../utils/useAlert";
+import CustomAlert from "../../../components/CustomAlert/CustomAlert";
 
 interface Categoria {
   id: number;
@@ -14,17 +13,13 @@ interface CategoriaModalProps {
   handleHideModal: () => void;
   loadCategorias: () => void;
   selectedCategoria: Categoria | null;
-  showAlert: (
-    message: string,
-    variant: "success" | "danger" | "warning" | "info",
-  ) => void;
 }
 export default function CategoriaModal(props: CategoriaModalProps) {
   const { showModal, handleHideModal, loadCategorias, selectedCategoria } =
     props;
 
   const [nome, setNome] = useState("");
-  const { alert, showAlert, hideAlert } = useAlert();
+  const [alert, setAlert] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
     if (selectedCategoria) {
@@ -37,31 +32,47 @@ export default function CategoriaModal(props: CategoriaModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome) {
-      showAlert("Preencha o nome da categoria", "warning");
+      setAlert({
+        message: "Preencha o nome da categoria",
+        type: "warning",
+        show: true,
+      });
       return;
     }
     try {
       if (selectedCategoria) {
         await api.put(`/categorias/${selectedCategoria.id}`, { nome });
-        showAlert("Categoria atualizada com sucesso", "success");
+        setAlert({
+          message: "Categoria atualizada com sucesso",
+          type: "success",
+          show: true,
+        });
       } else {
         await api.post("/categorias", { nome });
-        showAlert("Categoria adicionada com sucesso", "success");
+        setAlert({
+          message: "Categoria adicionada com sucesso",
+          type: "success",
+          show: true,
+        });
       }
 
       setNome("");
       handleHideModal();
-      hideAlert();
+      setAlert({ show: false, message: "", type: "" });
       loadCategorias();
     } catch (error) {
-      showAlert("Erro ao salvar categoria", "danger");
+      setAlert({
+        message: "Erro ao salvar categoria",
+        type: "danger",
+        show: true,
+      });
     }
   };
 
   function closeModal() {
     setNome("");
     handleHideModal();
-    hideAlert();
+    setAlert({ show: false, message: "", type: "" });
   }
 
   return (
@@ -72,11 +83,12 @@ export default function CategoriaModal(props: CategoriaModalProps) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Alert
+        <CustomAlert
           show={alert.show}
           message={alert.message}
-          variant={alert.variant}
-          onClose={hideAlert}
+          type={alert.type}
+          dismissible
+          onClose={() => setAlert({ show: false, message: "", type: "" })}
         />{" "}
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="nome">

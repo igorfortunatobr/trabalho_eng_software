@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Modal, Button, Form, Table } from "react-bootstrap";
 import api from "../../../services/api";
 import { FaTrash } from "react-icons/fa";
@@ -31,10 +31,9 @@ interface TransacaoModalProps {
   loadTransacoes: () => void;
   categorias: Categoria[];
   selectedTransacao: Transacao | null;
-  showAlert: (
-    message: string,
-    variant: "success" | "danger" | "warning" | "info",
-  ) => void;
+  setPageAlert: Dispatch<
+    SetStateAction<{ show: boolean; message: string; type: string }>
+  >;
 }
 
 export default function TransacaoModal(props: TransacaoModalProps) {
@@ -44,7 +43,7 @@ export default function TransacaoModal(props: TransacaoModalProps) {
     loadTransacoes,
     categorias,
     selectedTransacao,
-    showAlert,
+    setPageAlert,
   } = props;
 
   const getCurrentDate = () => {
@@ -61,9 +60,10 @@ export default function TransacaoModal(props: TransacaoModalProps) {
   const [novaCategoriaId, setNovaCategoriaId] = useState("");
   const [novaCategoriaValor, setNovaCategoriaValor] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [error, setError] = useState<{ show: boolean; message: string }>({
+  const [alert, setAlert] = useState({
     show: false,
     message: "",
+    type: "",
   });
 
   useEffect(() => {
@@ -98,24 +98,40 @@ export default function TransacaoModal(props: TransacaoModalProps) {
     };
 
     if (categoriaTransacoes.length === 0) {
-      setError({ show: true, message: "Adicione ao menos uma categoria" });
+      setAlert({
+        show: true,
+        message: "Adicione ao menos uma categoria",
+        type: "danger",
+      });
       return;
     }
 
     try {
       if (selectedTransacao) {
         await api.put(`/transacoes/id/${selectedTransacao.id}`, payload);
-        showAlert("Transação atualizada com sucesso", "success");
+        setPageAlert({
+          message: "Transação atualizada com sucesso",
+          type: "success",
+          show: true,
+        });
       } else {
         await api.post("/transacoes", payload);
-        showAlert("Transação adicionada com sucesso", "success");
+        setPageAlert({
+          message: "Transação adicionada com sucesso",
+          type: "success",
+          show: true,
+        });
       }
 
       resetForm();
       handleHideModal();
       loadTransacoes();
     } catch (error) {
-      setError({ show: true, message: "Erro ao salvar transação" });
+      setAlert({
+        show: true,
+        message: "Erro ao salvar transação",
+        type: "danger",
+      });
     }
   };
 
@@ -153,7 +169,7 @@ export default function TransacaoModal(props: TransacaoModalProps) {
     setData(getCurrentDate());
     setTipo("1");
     setCategoriaTransacoes([]);
-    setError({ show: false, message: "" });
+    setAlert({ show: false, message: "", type: "" });
   };
 
   return (
@@ -164,7 +180,12 @@ export default function TransacaoModal(props: TransacaoModalProps) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <CustomAlert message={error.message} type="danger" show={error.show} />
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          show={alert.show}
+          onClose={() => setAlert({ message: "", type: "", show: false })}
+        />
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="valor">
             <Form.Label>Valor</Form.Label>
