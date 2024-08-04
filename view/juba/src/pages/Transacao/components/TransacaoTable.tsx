@@ -42,9 +42,9 @@ const TransacaoTable: React.FC<TransacaoTableProps> = ({
       </tr>
     </thead>
     <tbody>
-      {transacoes.map((transacao: Transacao) => (
+      {transacoes.map((transacao: Transacao, index: number) => (
         <tr key={transacao.id}>
-          <td className="pt-3">{transacao.id}</td>
+          <td className="pt-3">{index +1}</td>
           <td className="pt-3">{transacao.descricao}</td>
           <td className=" pt-3">{formatToCoin(transacao.valor)}</td>
           <td className=" pt-3">
