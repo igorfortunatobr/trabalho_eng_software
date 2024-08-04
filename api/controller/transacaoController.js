@@ -41,7 +41,6 @@ router.post('/', async (req, res) => {
     if (transaction) {
       await transaction.rollback();
     }
-    console.error(error);
     global.UTILS.handleSequelizeError(error, res);
   }
 });
@@ -60,7 +59,12 @@ router.put('/id/:id', async (req, res) => {
     const transacao = await Transacao.findOne({ where: { id: transacaoId, idUsuario: userId } });
     if (!transacao) {
       await transaction.rollback();
-      return res.status(403).json({ message: 'Você só pode editar suas próprias transações' });
+      return res.status(403).json(
+        { 
+          message: global.ENVIRONMENT.ERROR_REASONS_TEXT.FORBIDDEN_REGISTER,
+          errCode: global.ENVIRONMENT.ERROR_REASONS_CODE.FORBIDDEN_REGISTER 
+        }
+      );
     }
 
     // Atualizar os dados da transação
@@ -101,11 +105,12 @@ router.put('/id/:id', async (req, res) => {
 
     res.status(204).json(transacaoData);
   } catch (error) {
-    console.error(error);
+
     // Rollback da transação em caso de erro
     if (transaction) {
       await transaction.rollback();
     }
+
     global.UTILS.handleSequelizeError(error, res);
   }
 });
@@ -119,7 +124,12 @@ router.delete('/id/:id', async (req, res) => {
     // Verificar se a transação pertence ao usuário
     const transacao = await Transacao.findOne({ where: { id: transacaoId, idUsuario: userId } });
     if (!transacao) {
-      return res.status(403).json({ message: 'Você só pode excluir suas próprias transações' });
+      return res.status(403).json(
+        { 
+          message: global.ENVIRONMENT.ERROR_REASONS_TEXT.FORBIDDEN_REGISTER,
+          errCode: global.ENVIRONMENT.ERROR_REASONS_CODE.FORBIDDEN_REGISTER 
+        }
+      );
     }
 
     // Excluir a transação e as categorias de transação associadas
@@ -128,7 +138,6 @@ router.delete('/id/:id', async (req, res) => {
 
     res.sendStatus(204);
   } catch (error) {
-    console.error(error);
     global.UTILS.handleSequelizeError(error, res);
   }
 });
@@ -140,7 +149,6 @@ router.get('/all', async (req, res) => {
     const transacoes = await Transacao.findAll({ where: { idUsuario: userId } });
     res.json(transacoes);
   } catch (error) {
-    console.error(error);
     global.UTILS.handleSequelizeError(error, res);
   }
 });
@@ -185,8 +193,7 @@ router.get('/relacao-receitas-despesas-mensal', async (req, res) => {
       despesas: despesasMensais
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erro ao buscar dados de receitas e despesas mensais' });
+    global.UTILS.handleSequelizeError(error, res);
   }
 });
 
@@ -200,7 +207,6 @@ router.get('/relacao-receitas-despesas', async (req, res) => {
 
     res.json({ receitas, despesas });
   } catch (error) {
-    console.error(error);
     global.UTILS.handleSequelizeError(error, res);
   }
 });
@@ -234,7 +240,6 @@ router.get('/quantidade-transacoes-categoria', async (req, res) => {
 
     res.json(Object.values(categoriasMap));
   } catch (error) {
-    console.error(error);
     global.UTILS.handleSequelizeError(error, res);
   }
 });
@@ -268,7 +273,6 @@ router.get('/valor-total-transacoes-categoria', async (req, res) => {
 
     res.json(Object.values(categoriasMap));
   } catch (error) {
-    console.error(error);
     global.UTILS.handleSequelizeError(error, res);
   }
 });
@@ -284,7 +288,12 @@ router.get('/id/:id', async (req, res) => {
     });
 
     if (!transacao) {
-      return res.status(404).json({ message: 'Transação não encontrada' });
+      return res.status(404).json(
+        { 
+          message: global.ENVIRONMENT.ERROR_REASONS_TEXT.DATA_EMPTY,
+          errCode: global.ENVIRONMENT.ERROR_REASONS_CODE.DATA_EMPTY 
+        }
+      );
     }
 
     // Buscar as categorias associadas à transação
@@ -312,7 +321,6 @@ router.get('/id/:id', async (req, res) => {
 
     res.json(response);
   } catch (error) {
-    console.error(error);
     global.UTILS.handleSequelizeError(error, res);
   }
 });
