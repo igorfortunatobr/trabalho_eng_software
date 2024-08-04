@@ -20,15 +20,15 @@ export default function CategoriaTable(props: CategoriaTableProps) {
     <Table className="table mt-3 w-100 h-100" hover>
       <thead>
         <tr>
-          <th>ID</th>
+          <th>Número</th>
           <th>Nome</th>
           <th className="text-end">Ações</th>
         </tr>
       </thead>
       <tbody>
-        {categorias.map((categoria: Categoria) => (
+        {categorias.map((categoria: Categoria, index: number) => (
           <tr className="align-items-center" key={categoria.id}>
-            <td className="col-2 pt-3">{categoria.id}</td>
+            <td className="col-2 pt-3">{index + 1}</td>
             <td className="col-8 pt-3">{categoria.nome}</td>
             <td className="col-5 text-end">
               <Row>
@@ -45,7 +45,7 @@ export default function CategoriaTable(props: CategoriaTableProps) {
                     className="btn-danger mx-2"
                     onClick={() => handleDelete(categoria.id)}
                   >
-                    <FaTrash className="my-1  p-0" size={18} />
+                    <FaTrash className="my-1 p-0" size={18} />
                   </Button>
                 </Col>
               </Row>
