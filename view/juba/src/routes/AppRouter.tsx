@@ -13,6 +13,7 @@ import TransacaoCRUD from "../pages/Transacao/Transacao";
 import Relatorios from "../pages/Relatorios/Relatorios";
 import { useAuth } from "../context/AuthContext";
 import Usuario from "../pages/Usuario/Usuario";
+import LandingPage from "../pages/LandingPage/LandingPage";
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -23,7 +24,7 @@ export default function AppRouter() {
         <Routes>
           <Route
             path="/"
-            element={isAuthenticated ? <Dashboard /> : <Login />}
+            element={isAuthenticated ? <Dashboard /> : <LandingPage />}
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Cadastro />} />
