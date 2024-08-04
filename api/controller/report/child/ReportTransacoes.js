@@ -29,9 +29,10 @@ class ReportTransacoes extends RelatorioStrategy {
     }
 
     adicionarCorpo(doc, data) {
-        const headers = ['ID', 'Descrição', 'Valor (R$)', 'Tipo', 'Data'];
+        let contador = 1;
+        const headers = ['N°', 'Descrição', 'Valor (R$)', 'Tipo', 'Data'];
         const rows = data.map(transacao => [
-            transacao.id,
+            contador++,
             transacao.descricao,
             transacao.valor.toFixed(2),
             global.ENVIRONMENT.TRANSACTION_TYPES[transacao.tipo],
