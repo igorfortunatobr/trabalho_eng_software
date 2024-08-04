@@ -27,6 +27,11 @@
 .impact-text {
   font-size: 24px;
   margin-bottom: 20px;
+  font-family: New Century Schoolbook, TeX Gyre Schola, serif;
+  font-style: italic;
+  color: rgb(49, 44, 44);
+  font-weight: 800;
+  padding-bottom: 3%;
 }
 
 .buttons .btn {
