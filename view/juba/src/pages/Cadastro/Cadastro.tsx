@@ -111,10 +111,10 @@ export default function Cadastro() {
   const presentation = () => (
     <Container>
       <img src="./logo-cadastro.png" alt="JUBA Logo" className="my-5 pt-5 w-50" />
-      <h2 className="merriweather-regular px-5">
+      <h2 className="impact-text text-tam">
         Assuma o controle de suas finanças de forma definitiva!
       </h2>
-      <h4 className="fw-light mt-4 mb-5">
+      <h4 className="fw-light mt-4 mb-5 text-tam">
         Cuidar do seu dinheiro pode ser simples. Com o Juba, você organiza e
         planeja sua vida financeira em um único lugar.
       </h4>

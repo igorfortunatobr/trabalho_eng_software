@@ -17,7 +17,7 @@ export default function LandingPage() {
                 </div>
             </header>
             <section className="hero">
-                <p className="impact-text">Texto de impacto chamativo</p>
+                <p className="impact-text">Transforme sua gestão financeira com facilidade. Controle total, decisões inteligentes.</p>
                 <div className="buttons">
                 <button className="btn" onClick={() => navigate("/login")}>Login</button>
                 <button className="btn" onClick={() => navigate("/register")}>Criar conta</button>
