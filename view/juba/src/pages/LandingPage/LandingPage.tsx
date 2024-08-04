@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./LandingPage.css";
 import { useNavigate } from "react-router-dom";
-import Footer from "../../components/Footer/Footer";
+import Footer from "../../components/footer/Footer";
 
 export default function LandingPage() {
   const navigate = useNavigate();
