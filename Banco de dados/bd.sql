@@ -1,6 +1,19 @@
 CREATE DATABASE IF NOT EXISTS bd_engsoftware DEFAULT CHARACTER SET utf8mb4 DEFAULT ENCRYPTION='N';
 USE bd_engsoftware;
 
+CREATE TABLE IF NOT EXISTS usuario (
+  id int NOT NULL AUTO_INCREMENT,
+  nome varchar(100) NOT NULL,
+  email varchar(60) NOT NULL,
+  senha varchar(60) NOT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY email (email),
+  KEY createdAt (createdAt),
+  KEY id (id)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS categoria (
   id int NOT NULL AUTO_INCREMENT,
   idUsuario int NOT NULL,
@@ -13,20 +26,6 @@ CREATE TABLE IF NOT EXISTS categoria (
   KEY idUsuario (idUsuario),
   CONSTRAINT fk_categoria_usuario1 FOREIGN KEY (idUsuario) REFERENCES usuario (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS categoriatransacao (
-  idCategoria int NOT NULL,
-  idTransacao int NOT NULL,
-  valor float NOT NULL,
-  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (idCategoria,idTransacao),
-  KEY fk_categoriaTransacao_has_transacao_transacao1_idx (idTransacao),
-  KEY fk_categoriaTransacao_has_transacao_categoriaTransacao_idx (idCategoria),
-  KEY createdAt (createdAt),
-  CONSTRAINT fk_categoriaTransacao_has_transacao_categoriaTransacao FOREIGN KEY (idCategoria) REFERENCES categoria (id),
-  CONSTRAINT fk_categoriaTransacao_has_transacao_transacao1 FOREIGN KEY (idTransacao) REFERENCES transacao (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS transacao (
   id int NOT NULL AUTO_INCREMENT,
@@ -46,15 +45,18 @@ CREATE TABLE IF NOT EXISTS transacao (
   CONSTRAINT fk_transacao_usuario1 FOREIGN KEY (idUsuario) REFERENCES usuario (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS usuario (
-  id int NOT NULL AUTO_INCREMENT,
-  nome varchar(100) NOT NULL,
-  email varchar(60) NOT NULL,
-  senha varchar(60) NOT NULL,
+CREATE TABLE IF NOT EXISTS categoriatransacao (
+  idCategoria int NOT NULL,
+  idTransacao int NOT NULL,
+  valor float NOT NULL,
   createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  KEY email (email),
+  PRIMARY KEY (idCategoria,idTransacao),
+  KEY fk_categoriaTransacao_has_transacao_transacao1_idx (idTransacao),
+  KEY fk_categoriaTransacao_has_transacao_categoriaTransacao_idx (idCategoria),
   KEY createdAt (createdAt),
-  KEY id (id)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+  CONSTRAINT fk_categoriaTransacao_has_transacao_categoriaTransacao FOREIGN KEY (idCategoria) REFERENCES categoria (id),
+  CONSTRAINT fk_categoriaTransacao_has_transacao_transacao1 FOREIGN KEY (idTransacao) REFERENCES transacao (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
