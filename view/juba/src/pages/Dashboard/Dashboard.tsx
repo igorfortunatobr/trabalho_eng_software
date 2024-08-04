@@ -14,11 +14,10 @@ import {
   Filler,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import useAlert from "../../utils/useAlert";
-import Alert from "../../components/utils/Alert";
 import Template from "../../components/Template/Template";
 import { Button, Col, Row } from "react-bootstrap";
 import { Context } from "chartjs-plugin-datalabels";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
 ChartJS.register(
   ArcElement,
@@ -49,7 +48,7 @@ export default function Dashboard() {
   });
   const [quantidadeTransacoesData, setQuantidadeTransacoesData] = useState([]);
   const [valorTransacoesData, setValorTransacoesData] = useState([]);
-  const { alert, showAlert, hideAlert } = useAlert();
+  const [alert, setAlert] = useState({ show: false, message: "", type: "" });
 
   const prevReceitasDespesasMensais = useRef([]);
   const prevQuantidadeTransacoesData = useRef([]);
@@ -94,9 +93,13 @@ export default function Dashboard() {
         prevValorTransacoesData.current = newValorTransacoesData;
       }
     } catch (error) {
-      showAlert("Erro ao carregar dados do dashboard", "danger");
+      setAlert({
+        message: "Erro ao carregar dados do dashboard",
+        type: "danger",
+        show: true,
+      });
     }
-  }, [showAlert]);
+  }, [alert, setAlert]);
 
   useEffect(() => {
     fetchData();
@@ -207,11 +210,12 @@ export default function Dashboard() {
   return (
     <Template>
       <div className="container mt-5">
-        <Alert
+        <CustomAlert
           show={alert.show}
+          dismissible
           message={alert.message}
-          variant={alert.variant}
-          onClose={hideAlert}
+          type={alert.type}
+          onClose={() => setAlert({ show: false, message: "", type: "" })}
         />
         <Row className="d-flex align-items-center">
           <Col>
