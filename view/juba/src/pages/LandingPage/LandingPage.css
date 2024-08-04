@@ -1,0 +1,51 @@
+.App {
+  text-align: center;
+}
+
+.header {
+  background-color: #ffc107;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-lp {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.logo-img{
+    width: 60%;
+}
+
+.hero {
+  background-color: #ffc107;
+  padding-bottom: 50px;
+}
+
+.impact-text {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.buttons .btn {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.benefits {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px 0;
+}
+
+.benefit-card {
+  width: 30%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
