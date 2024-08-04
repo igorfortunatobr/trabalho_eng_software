@@ -1,97 +1,75 @@
--- MySQL Workbench Forward Engineering
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+CREATE DATABASE IF NOT EXISTS `bd_engsoftware` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `bd_engsoftware`;
 
--- -----------------------------------------------------
--- Schema bd_engsoftware
--- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `categoria` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `idUsuario` int NOT NULL,
+  `nome` varchar(45) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  KEY `createdAt` (`createdAt`),
+  KEY `idUsuario` (`idUsuario`),
+  CONSTRAINT `fk_categoria_usuario1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3;
 
--- -----------------------------------------------------
--- Schema bd_engsoftware
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `bd_engsoftware` DEFAULT CHARACTER SET utf8 ;
-USE `bd_engsoftware` ;
+CREATE TABLE IF NOT EXISTS `categoriatransacao` (
+  `idCategoria` int NOT NULL,
+  `idTransacao` int NOT NULL,
+  `valor` double(15,2) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`idCategoria`,`idTransacao`),
+  KEY `fk_categoriaTransacao_has_transacao_transacao1_idx` (`idTransacao`),
+  KEY `fk_categoriaTransacao_has_transacao_categoriaTransacao_idx` (`idCategoria`),
+  KEY `createdAt` (`createdAt`),
+  CONSTRAINT `fk_categoriaTransacao_has_transacao_categoriaTransacao` FOREIGN KEY (`idCategoria`) REFERENCES `categoria` (`id`),
+  CONSTRAINT `fk_categoriaTransacao_has_transacao_transacao1` FOREIGN KEY (`idTransacao`) REFERENCES `transacao` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- -----------------------------------------------------
--- Table `bd_engsoftware`.`usuario`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bd_engsoftware`.`usuario` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(100) NOT NULL,
-  `email` VARCHAR(60) NOT NULL,
-  `senha` VARCHAR(60) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `transacao` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `idUsuario` int NOT NULL,
+  `descricao` varchar(250) NOT NULL,
+  `data` datetime NOT NULL,
+  `valor` double(15,2) NOT NULL,
+  `tipo` char(1) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`,`idUsuario`),
+  KEY `fk_transacao_usuario1_idx` (`idUsuario`),
+  KEY `data` (`data`),
+  KEY `tipo` (`tipo`),
+  KEY `id` (`id`),
+  KEY `createdAt` (`createdAt`),
+  CONSTRAINT `fk_transacao_usuario1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3;
 
+CREATE TABLE IF NOT EXISTS `usuario` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `email` varchar(60) NOT NULL,
+  `senha` varchar(60) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `email` (`email`),
+  KEY `createdAt` (`createdAt`),
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 
--- -----------------------------------------------------
--- Table `bd_engsoftware`.`categoria`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bd_engsoftware`.`categoria` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `bd_engsoftware`.`transacao`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bd_engsoftware`.`transacao` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `idUsuario` INT NOT NULL,
-  `data` DATETIME NOT NULL,
-  `valor` DOUBLE(15,2) NOT NULL,
-  PRIMARY KEY (`id`, `idUsuario`),
-  INDEX `fk_transacao_usuario1_idx` (`idUsuario` ASC) VISIBLE,
-  CONSTRAINT `fk_transacao_usuario1`
-    FOREIGN KEY (`idUsuario`)
-    REFERENCES `bd_engsoftware`.`usuario` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `bd_engsoftware`.`categoriaTransacao`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bd_engsoftware`.`categoriaTransacao` (
-  `idCategoria` INT NOT NULL,
-  `idTransacao` INT NOT NULL,
-  `valor` DOUBLE(15,2) NOT NULL,
-  PRIMARY KEY (`idCategoria`, `idTransacao`),
-  INDEX `fk_categoriaTransacao_has_transacao_transacao1_idx` (`idTransacao` ASC) VISIBLE,
-  INDEX `fk_categoriaTransacao_has_transacao_categoriaTransacao_idx` (`idCategoria` ASC) VISIBLE,
-  CONSTRAINT `fk_categoriaTransacao_has_transacao_categoriaTransacao`
-    FOREIGN KEY (`idCategoria`)
-    REFERENCES `bd_engsoftware`.`categoria` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_categoriaTransacao_has_transacao_transacao1`
-    FOREIGN KEY (`idTransacao`)
-    REFERENCES `bd_engsoftware`.`transacao` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-ALTER TABLE `usuario`
-ADD COLUMN `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-
-ALTER TABLE `categoria`
-ADD COLUMN `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-
-ALTER TABLE `transacao`
-ADD COLUMN `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-
-ALTER TABLE `categoriaTransacao`
-ADD COLUMN `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
