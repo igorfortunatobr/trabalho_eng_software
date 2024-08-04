@@ -124,8 +124,8 @@ export default function Cadastro() {
   return (
     <>
       {!desktop ? (
-        <Row>
-          <Col className="bg-yellow w-50 d-flex flex-column align-items-center text-center ">
+        <Row className="altura">
+          <Col className="bg-yellow w-50 d-flex flex-column align-items-center text-center">
             {presentation()}
           </Col>
           <Col className="bg-purple w-50 ">
@@ -146,8 +146,8 @@ export default function Cadastro() {
           </Col>
         </Row>
       ) : (
-        <Col>
-          <div className="bg-yellow d-flex flex-column align-items-center text-center ">
+        <Col className="altura">
+          <div className="bg-yellow d-flex flex-column align-items-center text-center">
             {presentation()}
           </div>
           <div className="bg-purple">
