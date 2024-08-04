@@ -8,8 +8,14 @@ router.post('/login', async (req, res) => {
   const { email, senha } = req.body;
 
   const usuario = await Usuario.findOne({ where: { email } });
+  
   if (!usuario || !bcrypt.compareSync(senha, usuario.senha)) {
-    return res.status(401).json({ message: 'Credenciais inválidas' });
+    return res.status(401).json(
+      { 
+        message: global.ENVIRONMENT.ERROR_REASONS_TEXT.INVALID_CREDENTIALS, 
+        errCode: global.ENVIRONMENT.ERROR_REASONS_TEXT.INVALID_CREDENTIALS 
+      }
+    );
   }
 
   const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, { expiresIn: '1h' });
