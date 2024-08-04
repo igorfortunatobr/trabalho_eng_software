@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import TransacaoModal from "./components/TransacaoModal";
 import TransacaoTable from "./components/TransacaoTable";
-import Alert from "../../components/utils/Alert";
-import useAlert from "../../utils/useAlert";
 import Template from "../../components/Template/Template";
 import formatToCoin from "../../utils/formatToCoin";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
 interface Transacao {
   id: number;
@@ -30,7 +29,7 @@ export default function TransacaoCRUD() {
     null,
   );
   const [showModal, setShowModal] = useState(false);
-  const { alert, showAlert, hideAlert } = useAlert();
+  const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const [totalReceitas, setTotalReceitas] = useState(0);
   const [totalDespesas, setTotalDespesas] = useState(0);
 
@@ -48,7 +47,11 @@ export default function TransacaoCRUD() {
       const response = await api.get("/transacoes/all");
       setTransacoes(response.data);
     } catch (error) {
-      showAlert("Erro ao carregar transações", "danger");
+      setAlert({
+        message: "Erro ao carregar transações",
+        type: "danger",
+        show: true,
+      });
     }
   };
 
@@ -57,7 +60,11 @@ export default function TransacaoCRUD() {
       const response = await api.get("/categorias");
       setCategorias(response.data);
     } catch (error) {
-      showAlert("Erro ao carregar categorias", "danger");
+      setAlert({
+        message: "Erro ao carregar categorias",
+        type: "danger",
+        show: true,
+      });
     }
   };
 
@@ -67,7 +74,11 @@ export default function TransacaoCRUD() {
       setSelectedTransacao(response.data);
       setShowModal(true);
     } catch (error) {
-      showAlert("Erro ao carregar transação", "danger");
+      setAlert({
+        message: "Erro ao carregar transação",
+        type: "danger",
+        show: true,
+      });
     }
   };
 
@@ -76,7 +87,11 @@ export default function TransacaoCRUD() {
       await api.delete(`/transacoes/id/${id}`);
       loadTransacoes();
     } catch (error) {
-      showAlert("Erro ao excluir transação", "danger");
+      setAlert({
+        message: "Erro ao excluir transação",
+        type: "danger",
+        show: true,
+      });
     }
   };
 
@@ -109,11 +124,11 @@ export default function TransacaoCRUD() {
   return (
     <Template>
       <div className="container mt-5">
-        <Alert
+        <CustomAlert
           show={alert.show}
           message={alert.message}
-          variant={alert.variant}
-          onClose={hideAlert}
+          type={alert.type}
+          onClose={() => setAlert({ show: false, message: "", type: "" })}
         />
         <h2>Listagem de Transações</h2>
         <div className="d-flex justify-content-end mb-3">
@@ -168,7 +183,7 @@ export default function TransacaoCRUD() {
           loadTransacoes={loadTransacoes}
           categorias={categorias}
           selectedTransacao={selectedTransacao}
-          showAlert={showAlert}
+          setPageAlert={setAlert}
         />
       </div>
     </Template>

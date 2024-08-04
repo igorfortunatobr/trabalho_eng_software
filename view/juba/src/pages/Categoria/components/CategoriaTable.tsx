@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, Col, Row, Table } from "react-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 interface Categoria {
@@ -30,19 +30,25 @@ export default function CategoriaTable(props: CategoriaTableProps) {
           <tr className="align-items-center" key={categoria.id}>
             <td className="col-2 pt-3">{categoria.id}</td>
             <td className="col-8 pt-3">{categoria.nome}</td>
-            <td className="text-end">
-              <Button
-                className="btn-warning p-2"
-                onClick={() => handleEdit(categoria)}
-              >
-                <FaEdit className="mb-1 ms-1 p-0" size={20} />
-              </Button>
-              <Button
-                className="btn-danger mx-2"
-                onClick={() => handleDelete(categoria.id)}
-              >
-                <FaTrash className="my-1  p-0" size={18} />
-              </Button>
+            <td className="col-5 text-end">
+              <Row>
+                <Col className="w-25">
+                  <Button
+                    className="btn-warning p-2 me-2"
+                    onClick={() => handleEdit(categoria)}
+                  >
+                    <FaEdit className="mb-1 ms-1 p-0" size={20} />
+                  </Button>
+                </Col>
+                <Col className="w-25">
+                  <Button
+                    className="btn-danger mx-2"
+                    onClick={() => handleDelete(categoria.id)}
+                  >
+                    <FaTrash className="my-1  p-0" size={18} />
+                  </Button>
+                </Col>
+              </Row>
             </td>
           </tr>
         ))}

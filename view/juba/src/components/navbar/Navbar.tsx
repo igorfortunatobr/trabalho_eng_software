@@ -34,7 +34,7 @@ export default function NavigationBar() {
           to="/dashboard"
           className="d-flex align-items-center"
         >
-          <img src="./logo.png" alt="JUBA Logo" className="navbar-logo" />{" "}
+          <img src="./logo-navbar.png" alt="JUBA Logo" className="navbar-logo" />{" "}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
