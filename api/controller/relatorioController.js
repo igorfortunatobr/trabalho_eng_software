@@ -19,10 +19,10 @@ router.post('/', async (req, res) => {
                 strategy = new ReportTransacoes(userId, filtro, "Relatório de Transações");
                 break;
             case 'transacaoCategoria':
-                strategy = new ReportTransacaoCategoria(userId, filtro, "Relatório de Transações por categoria");
+                strategy = new ReportTransacaoCategoria(userId, filtro, "Relatório de Transações por Categoria");
                 break;
             case 'gastosCategoria':
-                strategy = new ReportGastosCategoria(userId, filtro, "Relatório de Gastos por categoria");
+                strategy = new ReportGastosCategoria(userId, filtro, "Relatório de Gastos por Categoria");
                 break;
             default:
                 throw new Error(
