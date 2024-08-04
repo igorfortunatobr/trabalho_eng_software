@@ -62,6 +62,8 @@ router.delete("/:id", async (req, res) => {
 
     await Categoria.destroy({ where: { id: categoriaId, idUsuario: userId } });
 
+    res.status(200).json("OK");
+
   } catch (error) {
     global.UTILS.handleSequelizeError(error, res);
   }
