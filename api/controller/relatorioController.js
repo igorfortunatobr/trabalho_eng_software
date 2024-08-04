@@ -25,7 +25,12 @@ router.post('/', async (req, res) => {
                 strategy = new ReportGastosCategoria(userId, filtro, "Relatório de Gastos por categoria");
                 break;
             default:
-                throw new Error({message: 'Tipo de relatório inválido'});
+                throw new Error(
+                    { 
+                        message: global.ENVIRONMENT.ERROR_REASONS_TEXT.INVALID_REPORT, 
+                        errCode: global.ENVIRONMENT.ERROR_REASONS_CODE.INVALID_REPORT 
+                    }
+                );
         }
     
         const relatorioBase64 = await strategy.gerarRelatorio();
