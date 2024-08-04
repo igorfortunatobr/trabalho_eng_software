@@ -12,7 +12,6 @@ router.post('/', async (req, res) => {
     const categoria = await Categoria.create(categoriaData);
     res.status(201).json(categoria);
   } catch (error) {
-    console.error(error);
     global.UTILS.handleSequelizeError(error, res);
   }
 });

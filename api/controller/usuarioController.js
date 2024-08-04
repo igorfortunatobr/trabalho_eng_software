@@ -11,7 +11,10 @@ router.post('/register', async (req, res) => {
         const { nome, email, senha } = req.body;
 
         if (!nome || !email || !senha)
-            throw {errorMessage: "Existem informações que não foram preenchidas."};
+            throw { 
+                    message: global.ENVIRONMENT.ERROR_REASONS_TEXT.DATA_EMPTY,
+                    errCode: global.ENVIRONMENT.ERROR_REASONS_CODE.DATA_EMPTY 
+                  };
 
         const user = await Usuario.findOne({
             where: { email: email.toLowerCase().trim() },
@@ -19,7 +22,10 @@ router.post('/register', async (req, res) => {
         });
 
         if (user || user?.length)
-            throw {errorMessage: "Já existe um usuário registrado com este e-mail."}
+            throw { 
+                    message: global.ENVIRONMENT.ERROR_REASONS_TEXT.USER_DUPLICATE, 
+                    errCode: global.ENVIRONMENT.ERROR_REASONS_CODE.USER_DUPLICATE 
+                  }
 
         // Criptografar a senha
         const hashedSenha = await bcrypt.hash(senha, 10);
