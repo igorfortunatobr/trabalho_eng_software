@@ -12,8 +12,6 @@ const cors = require("cors");
 
 const { verificarToken } = require('./api/middleware/authMiddleware');
 
-//const categoriaTransacaoController = require('./api/controller/categoriaTransacaoController');
-
 global.ENVIRONMENT = ENVIRONMENT;
 global.UTILS = UTILS;
 
