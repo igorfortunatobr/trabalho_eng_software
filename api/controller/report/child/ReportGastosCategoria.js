@@ -53,9 +53,10 @@ class ReportGastosCategoria extends RelatorioStrategy {
     }
 
     adicionarCorpo(doc, data) {
-
-        const headers = ['Categoria', 'Total Gasto (R$)'];
+        let contador = 1;
+        const headers = ['N°', 'Categoria', 'Total Gasto (R$)'];
         const rows = data.map(item => [
+            contador++,
             item.Categoria.nome,
             item.dataValues.totalGasto.toFixed(2)
         ]);
