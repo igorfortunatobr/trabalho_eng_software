@@ -23,8 +23,6 @@ const app = express();
 app.use(
   cors({
     // origin: [
-    //   "https://testes-siaweb.ddns.net/",
-    //   "https://siaweb.criareti.com.br/",
     // ],
   }),
 );
