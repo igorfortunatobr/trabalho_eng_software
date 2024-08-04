@@ -49,6 +49,7 @@
 }
 
 .benefit-card {
+  background-color: #ffc107 !important;
   width: 30%;
   padding: 20px;
   border: 1px solid #ccc;
