@@ -39,8 +39,8 @@ export default function Login() {
     <div className="login-container">
       <Container>
         <Col lg={12} xl={12}>
-          <Row className="d-flex justify-content-center py-4">
-            <img src="./logo.png" alt="JUBA Logo" className="w-25" />
+          <Row className="d-flex justify-content-center">
+            <img src="./logo-login.png" alt="JUBA Logo" className="w-25" />
           </Row>
           <Row className="s-flex justify-content-center mb-5">
             <Card
@@ -85,7 +85,7 @@ export default function Login() {
                     onClick={event => handleLogin(event)}
                     type="submit"
                   >
-                    <b>Entrar</b>
+                    <b>Entre</b>
                   </Button>
                   <p className="my-0 mt-1">ou</p>
                   <Button

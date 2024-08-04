@@ -110,7 +110,7 @@ export default function Cadastro() {
 
   const presentation = () => (
     <Container>
-      <img src="./logo.png" alt="JUBA Logo" className="my-5 pt-5 w-50" />
+      <img src="./logo-cadastro.png" alt="JUBA Logo" className="my-5 pt-5 w-50" />
       <h2 className="merriweather-regular px-5">
         Assuma o controle de suas finanças de forma definitiva!
       </h2>
