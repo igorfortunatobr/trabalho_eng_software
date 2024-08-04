@@ -129,6 +129,10 @@ export default function Usuario() {
                   show={alert.show}
                   message={alert.message}
                   type={alert.type}
+                  dismissible
+                  onClose={() =>
+                    setAlert({ show: false, message: "", type: "" })
+                  }
                 />
                 <Form className="text-start" onSubmit={handleSubmit}>
                   {editPassword ? (

@@ -1,6 +1,6 @@
 import React from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { Badge, Button } from "react-bootstrap";
+import { Badge, Button, Col, Row } from "react-bootstrap";
 import formatToCoin from "../../../utils/formatToCoin";
 
 interface Transacao {
@@ -62,19 +62,25 @@ const TransacaoTable: React.FC<TransacaoTableProps> = ({
           <td className="pt-3">
             {new Date(transacao.data).toLocaleDateString()}
           </td>
-          <td className="text-end">
-            <Button
-              className="btn-warning p-2"
-              onClick={() => handleEdit(transacao.id)}
-            >
-              <FaEdit className="mb-1 ms-1 p-0" size={20} />
-            </Button>
-            <Button
-              className="btn-danger mx-2"
-              onClick={() => handleDelete(transacao.id)}
-            >
-              <FaTrash className="my-1 p-0" size={18} />
-            </Button>
+          <td className="col-3 text-end">
+            <Row>
+              <Col className="w-25">
+                <Button
+                  className="btn-warning p-2"
+                  onClick={() => handleEdit(transacao.id)}
+                >
+                  <FaEdit className="mb-1 ms-1 p-0" size={20} />
+                </Button>
+              </Col>
+              <Col className="w-25">
+                <Button
+                  className="btn-danger mx-2"
+                  onClick={() => handleDelete(transacao.id)}
+                >
+                  <FaTrash className="my-1 p-0" size={18} />
+                </Button>
+              </Col>
+            </Row>
           </td>
         </tr>
       ))}
