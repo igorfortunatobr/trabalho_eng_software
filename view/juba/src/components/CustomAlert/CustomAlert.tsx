@@ -7,14 +7,21 @@ interface CustomAlertProps {
   message: string;
   type: string;
   show: boolean;
+  onClose: () => void;
+  dismissible?: boolean;
 }
 
 export default function CustomAlert(props: CustomAlertProps) {
-  const { message, type, show } = props;
+  const { message, type, show, onClose, dismissible } = props;
 
   return (
     <>
-      <Alert variant={props.type} show={show}>
+      <Alert
+        variant={props.type}
+        show={show}
+        dismissible={dismissible || false}
+        onClose={onClose}
+      >
         <Row className="d-flex">
           <Col xs={1}>
             {type === "success" && <FaCheck />}

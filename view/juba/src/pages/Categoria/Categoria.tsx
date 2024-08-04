@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import CategoriaModal from "./components/CategoriaModal";
 import CategoriaTable from "./components/CategoriaTable";
-import useAlert from "../../utils/useAlert";
-import Alert from "../../components/utils/Alert";
 import Template from "../../components/Template/Template";
 import { Col, Row } from "react-bootstrap";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
 interface Categoria {
   id: number;
@@ -18,7 +17,7 @@ export default function CategoriaCRUD() {
     null,
   );
   const [showModal, setShowModal] = useState(false);
-  const { alert, showAlert, hideAlert } = useAlert();
+  const [alert, setAlert] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
     loadCategorias();
@@ -29,7 +28,11 @@ export default function CategoriaCRUD() {
       const response = await api.get("/categorias");
       setCategorias(response.data);
     } catch (error) {
-      showAlert("Erro ao carregar categorias", "danger");
+      setAlert({
+        show: true,
+        message: "Erro ao carregar categorias",
+        type: "danger",
+      });
     }
   };
 
@@ -42,12 +45,18 @@ export default function CategoriaCRUD() {
     try {
       await api.delete(`/categorias/${id}`);
       loadCategorias();
-      showAlert("Categoria excluída com sucesso", "success");
+      setAlert({
+        show: true,
+        message: "Categoria excluída com sucesso",
+        type: "success",
+      });
     } catch (error) {
-      showAlert(
-        "Não foi possível excluir a categoria. Verifique se ela não está sendo utilizada em alguma transação, não é possível excluir categorias que estão sendo utilizadas!",
-        "danger",
-      );
+      setAlert({
+        show: true,
+        message:
+          "Não foi possível excluir a categoria. Verifique se ela não está sendo utilizada em alguma transação, não é possível excluir categorias que estão sendo utilizadas!",
+        type: "danger",
+      });
     }
   };
 
@@ -63,11 +72,12 @@ export default function CategoriaCRUD() {
   return (
     <Template>
       <div className="container mt-5">
-        <Alert
+        <CustomAlert
           show={alert.show}
           message={alert.message}
-          variant={alert.variant}
-          onClose={hideAlert}
+          type={alert.type}
+          dismissible={true}
+          onClose={() => setAlert({ show: false, message: "", type: "" })}
         />{" "}
         <Row>
           <Col>
@@ -91,7 +101,6 @@ export default function CategoriaCRUD() {
           handleHideModal={handleHideModal}
           loadCategorias={loadCategorias}
           selectedCategoria={selectedCategoria}
-          showAlert={showAlert}
         />
       </div>
     </Template>
