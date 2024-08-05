@@ -2,6 +2,7 @@ import React from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { Badge, Button, Col, Row } from "react-bootstrap";
 import formatToCoin from "../../../utils/formatToCoin";
+import formatToDate from "../../../utils/formatToDate";
 
 interface Transacao {
   id: number;
@@ -44,7 +45,7 @@ const TransacaoTable: React.FC<TransacaoTableProps> = ({
     <tbody>
       {transacoes.map((transacao: Transacao, index: number) => (
         <tr key={transacao.id}>
-          <td className="pt-3">{index +1}</td>
+          <td className="pt-3">{index + 1}</td>
           <td className="pt-3">{transacao.descricao}</td>
           <td className=" pt-3">{formatToCoin(transacao.valor)}</td>
           <td className=" pt-3">
@@ -59,9 +60,7 @@ const TransacaoTable: React.FC<TransacaoTableProps> = ({
               </Badge>
             )}
           </td>
-          <td className="pt-3">
-            {new Date(transacao.data).toLocaleDateString()}
-          </td>
+          <td className="pt-3">{formatToDate(transacao.data)}</td>
           <td className="col-3 text-end">
             <Row>
               <Col className="w-25">

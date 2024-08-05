@@ -25,22 +25,6 @@ app.use(
   }),
 );
 
-app.use(express.json());
-
-// Middleware de tratamento de erros
-app.use((err, req, res, next) => {
-  console.error(err);
-
-  if (err instanceof ForeignKeyConstraintError) {
-    return res.status(400).json({ message: 'Erro de chave estrangeira. Verifique as dependências.' });
-  } else if (err instanceof ValidationError) {
-    return res.status(400).json({ message: 'Erro de validação. Verifique os dados enviados.' });
-  } else {
-    return res.status(500).json({ message: 'Erro interno do servidor.' });
-  }
-});
-
-
 // Middleware para analisar corpos de solicitação JSON
 app.use(express.json());
 
