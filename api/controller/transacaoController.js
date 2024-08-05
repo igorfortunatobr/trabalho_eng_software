@@ -310,6 +310,7 @@ router.get('/id/:id', async (req, res) => {
       id: transacao.id,
       idUsuario: transacao.idUsuario,
       data: transacao.data,
+      descricao: transacao.descricao,
       tipo: transacao.tipo,
       valor: transacao.valor,
       categorias: categoriasTransacoes.map(ct => ({
