@@ -48,7 +48,9 @@ export default function TransacaoModal(props: TransacaoModalProps) {
 
   const getCurrentDate = () => {
     const today = new Date();
-    return today.toISOString().split("T")[0];
+    return new Date(
+      today.getTime() + today.getTimezoneOffset() * 60000,
+    ).toISOString();
   };
 
   const [valor, setValor] = useState("");
