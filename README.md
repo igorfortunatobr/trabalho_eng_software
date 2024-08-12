@@ -27,4 +27,12 @@ PORT_NODE=PORTA_API_BACKEND
 8 - Rodar ``` npm run start ``` para subir o frontend.
 
 9 - É possível acessar a aplicação em ``` http://localhost:3000/ ```.
+
+# Rodar os testes com Cypress
+
+1 - Com o back e front já rodando, acessar a pasta ``` ./view/juba ``` e rodar no terminal: ``` npx cypress open ```.
+
+2 - Selecionar ```E2E Testing```.
+
+3 - Selecionar ```Continue``` e escolher o navegador desejado, depois selecionar ``` Start E2E Testing in [navegador] ```.
     
