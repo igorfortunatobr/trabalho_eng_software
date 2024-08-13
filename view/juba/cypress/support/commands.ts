@@ -3,26 +3,44 @@ export {};
 declare global {
   namespace Cypress {
     interface Chainable {
-      loginAndSetSession(): Chainable<void>
+      realizaLogin(): Chainable<void>
+      verificaRegistro(): Chainable<void>
     }
   }
 }
 
-Cypress.Commands.add('loginAndSetSession', () => {
-    cy.session('novo.usuario@example.com', () => {
-        cy.intercept('POST', '/auth/login', {
-            fixture: 'registro.json',
-        }).as('postLogin');
+Cypress.Commands.add('verificaRegistro', () => {
+  cy.request({
+    method: 'POST',
+    url: 'http://localhost:8098/auth/login',
+    failOnStatusCode: false, // Não falha se o status for diferente de 2xx
+    body: {
+      email: 'novo.usuario@example.com',
+      senha: 'senha123',
+    }
+  }).then((response) => {
+    if (response.status === 401) {
+      // Se o login falhar com 401, o usuário não existe, então o registramos
+      cy.request('POST', 'http://localhost:8098/usuarios/register', {
+        nome: 'Novo Usuário',
+        email: 'novo.usuario@example.com',
+        senha: 'senha123'
+      }).then((registerResponse) => {
+        expect(registerResponse.status).to.eq(201); // Verifica se o cadastro foi bem-sucedido
+      });
+    }
+  });
+});
 
-        cy.visit('/login');
-        cy.get('input#formBasicEmail').type('novo.usuario@example.com');
-        cy.get('input#formBasicPassword').type('senha123');
-        cy.get('button[type="submit"]').click();
-        cy.wait('@postLogin');
-
-        // Simula o armazenamento do token
-        cy.window().then((win) => {
-            win.localStorage.setItem('authToken', 'novo-fake-jwt-token');
-        });
+Cypress.Commands.add('realizaLogin', () => {
+  cy.session('novo.usuario@example.com', () => {
+    cy.request('POST', 'http://localhost:8098/auth/login', {
+      email: 'novo.usuario@example.com',
+      senha: 'senha123'
+    }).then((response) => {
+      const token = response.body.token;
+      cy.wrap(token).as('token'); // Armazena o token em uma alias para reutilização
+      window.localStorage.setItem('token', token); // Salva o token no localStorage
     });
+  });
 });
