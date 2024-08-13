@@ -40,7 +40,8 @@ describe('Cadastro', () => {
     cy.get('button[type="submit"]').click();
 
     cy.get('input#formNome:invalid').then($input => {
-      expect($input[0].validationMessage).to.eq('Preencha este campo.');
+      const inputElement = $input[0] as HTMLInputElement;
+      expect(inputElement.validationMessage).to.eq('Preencha este campo.');
     });
   });
 

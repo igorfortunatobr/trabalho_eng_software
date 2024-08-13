@@ -57,7 +57,7 @@ export default function TransacaoCRUD() {
 
   const loadCategorias = async () => {
     try {
-      const response = await api.get("/categorias");
+      const response = await api.get("/categorias/all");
       setCategorias(response.data);
     } catch (error) {
       setAlert({

@@ -25,7 +25,7 @@ export default function CategoriaCRUD() {
 
   const loadCategorias = async () => {
     try {
-      const response = await api.get("/categorias");
+      const response = await api.get("/categorias/all");
       setCategorias(response.data);
     } catch (error) {
       setAlert({
