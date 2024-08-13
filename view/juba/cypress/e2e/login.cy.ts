@@ -24,7 +24,8 @@ describe('Tela de Login', () => {
     cy.get('button[type="submit"]').click();
 
     cy.get('input#formBasicEmail:invalid').then($input => {
-      expect($input[0].validationMessage).to.eq('Preencha este campo.');
+      const inputElement = $input[0] as HTMLInputElement;
+      expect(inputElement.validationMessage).to.eq('Preencha este campo.');
     });
   });
 
@@ -34,7 +35,8 @@ describe('Tela de Login', () => {
     cy.get('button[type="submit"]').click();
 
     cy.get('input#formBasicPassword:invalid').then($input => {
-      expect($input[0].validationMessage).to.eq('Preencha este campo.');
+      const inputElement = $input[0] as HTMLInputElement;
+      expect(inputElement.validationMessage).to.eq('Preencha este campo.');
     });
   });
 

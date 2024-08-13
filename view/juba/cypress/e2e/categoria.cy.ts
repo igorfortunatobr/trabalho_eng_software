@@ -3,13 +3,8 @@ describe('Fluxo Completo: Cadastro de Categoria', () => {
   beforeEach(() => {
     cy.verificaRegistro();
     cy.realizaLogin();
-    
-    /*cy.intercept('GET', '/categorias/all', {
-      fixture: 'categorias.json',
-    }).as('getCategorias');*/
 
     cy.visit('/categorias');
-    //cy.wait('@getCategorias');
   });
 
   it('Deve redirecionar para a página de categorias e cadastrar uma nova categoria', () => {
