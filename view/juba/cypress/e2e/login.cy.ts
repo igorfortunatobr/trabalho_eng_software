@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 
 describe('Tela de Login', () => {
-  let randomEmail;
-  let randomPassword;
+  let randomEmail : string;
+  let randomPassword : string;
 
   beforeEach(() => {
     randomEmail = faker.internet.email();  // Gera um e-mail aleatório
