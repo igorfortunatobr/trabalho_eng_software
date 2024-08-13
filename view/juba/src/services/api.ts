@@ -6,6 +6,11 @@ const api = axios.create({
   baseURL: 'http://localhost:8098', // Atualize com seu URL
 });
 
+export interface IError {
+  message: string,
+  errCode: string
+}
+
 // Interceptor de requisição
 api.interceptors.request.use(
   (config) => {
@@ -24,9 +29,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => {
+    let errorMessage;
+    let errCode;
     if (error.response) {
-      const errorMessage = (error.response.data as { message?: string }).message || 'Erro desconhecido.';
-      const errCode = (error.response.data as { errCode?: string }).errCode;
+      errorMessage = (error.response.data as { message?: string }).message || 'Erro desconhecido.';
+      errCode = (error.response.data as { errCode?: string }).errCode;
 
       if (errCode === 'EXPIRED_TOKEN') {
         toast.error('Token expirado! Faça login novamente.');
@@ -39,7 +46,7 @@ api.interceptors.response.use(
     } else {
       toast.error('Erro desconhecido.');
     }
-    return Promise.reject(error);
+    return Promise.reject(errorMessage);
   }
 );
 
