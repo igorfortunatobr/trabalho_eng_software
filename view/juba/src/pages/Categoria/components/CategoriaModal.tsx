@@ -48,7 +48,7 @@ export default function CategoriaModal(props: CategoriaModalProps) {
           show: true,
         });
       } else {
-        await api.post("/categorias/all", { nome });
+        await api.post("/categorias", { nome });
         setAlert({
           message: "Categoria adicionada com sucesso",
           type: "success",

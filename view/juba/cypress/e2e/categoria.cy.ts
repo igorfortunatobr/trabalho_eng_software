@@ -1,14 +1,15 @@
 describe('Fluxo Completo: Cadastro de Categoria', () => {
   
   beforeEach(() => {
-    cy.loginAndSetSession();
+    cy.verificaRegistro();
+    cy.realizaLogin();
     
-    cy.intercept('GET', '/categorias/all', {
+    /*cy.intercept('GET', '/categorias/all', {
       fixture: 'categorias.json',
-    }).as('getCategorias');
+    }).as('getCategorias');*/
 
     cy.visit('/categorias');
-    cy.wait('@getCategorias');
+    //cy.wait('@getCategorias');
   });
 
   it('Deve redirecionar para a página de categorias e cadastrar uma nova categoria', () => {
