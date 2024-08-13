@@ -1,0 +1,6 @@
+{
+  "id": 1,
+  "nome": "Novo Usuário",
+  "email": "novo.usuario@example.com",
+  "token": "novo-fake-jwt-token"
+}

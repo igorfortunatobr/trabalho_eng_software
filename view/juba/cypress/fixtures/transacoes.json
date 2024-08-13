@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "idUsuario": 1,
+    "data": "2024-07-01",
+    "tipo": "2",
+    "valor": 200.0,
+    "descricao": "Receita de exemplo",
+    "categorias": [
+      {
+        "idCategoria": "1",
+        "nome": "Categoria 1",
+        "valor": 200.0
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "idUsuario": 1,
+    "data": "2024-07-05",
+    "tipo": "1",
+    "valor": 100.0,
+    "descricao": "Despesa de exemplo",
+    "categorias": [
+      {
+        "idCategoria": "2",
+        "nome": "Categoria 2",
+        "valor": 100.0
+      }
+    ]
+  }
+]

@@ -43,7 +43,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/all', async (req, res) => {
   try {
     const userId = req.userId; // Obtém o ID do usuário autenticado
     
