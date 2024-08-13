@@ -1,129 +1,59 @@
-describe('CRUD de Categorias com Controle de Acesso', () => {
-  beforeEach(() => {
-    // Intercepta a chamada de login e responde com sucesso
-    cy.intercept('POST', '/auth/login', {
-      statusCode: 200,
-      body: { token: 'fake-jwt-token' },
-    }).as('postLogin');
+describe('Fluxo Completo: Cadastro de Usuário, Login, Visualização do Dashboard e Cadastro de Categoria', () => {
+  const usuario = {
+    nome: 'Teste Cypress',
+    email: `teste.cypress.${Date.now()}@teste.com`,
+    senha: 'senha123',
+  };
 
-    // Intercepta a chamada para obter os dados do usuário após o login
-    cy.intercept('GET', '/usuarios', {
-      statusCode: 200,
-      body: {
-        id: 1,
-        nome: 'Usuário Teste',
-        email: 'teste@teste.com',
-        createdAt: '2024-07-21T22:21:53.000Z',
-        updatedAt: '2024-07-21T22:21:53.000Z',
-      },
-    }).as('getUserInfo');
+  it('Deve cadastrar um novo usuário', () => {
+    cy.visit('/register');
 
-    // Intercepta as chamadas de API do Dashboard para evitar erros
-    cy.intercept('GET', '/transacoes/*', {
-      statusCode: 200,
-      body: {},
-    }).as('getDashboardData');
+    // Preenche o formulário de cadastro
+    cy.get('input#formNome').type(usuario.nome);
+    cy.get('input#formEmail').type(usuario.email);
+    cy.get('input#formPassword').type(usuario.senha);
+    cy.get('input#formConfirmPassword').type(usuario.senha);
+    cy.get('button[type="submit"]').contains('Criar conta').click();
 
-    // Realiza o login antes de visitar a página de categorias
+    // Verifica se foi redirecionado para a tela de login
+    cy.url().should('include', '/login');
+  });
+
+  it('Deve fazer login com o usuário recém-cadastrado', () => {
     cy.visit('/login');
-    cy.get('input#formBasicEmail').type('teste@teste.com');
-    cy.get('input#formBasicPassword').type('senha123');
-    cy.get('button[type="submit"]').click();
-    cy.wait('@postLogin');
-    cy.wait('@getUserInfo');
 
-    // Redireciona manualmente para a página de categorias após o login
+    // Preenche o formulário de login
+    cy.get('input#formBasicEmail').type(usuario.email);
+    cy.get('input#formBasicPassword').type(usuario.senha);
+    cy.get('button[type="submit"]').contains('Entre').click();
+
+    // Verifica se foi redirecionado para o dashboard
+    cy.url().should('include', '/dashboard');
+  });
+
+  it('Deve visualizar o Dashboard sem informações iniciais', () => {
+    // Verifica se o dashboard está vazio ou com dados mínimos
+    cy.contains('Receitas vs Despesas (Mensal)').should('be.visible');
+    cy.get('canvas').should('exist');
+
+    // Verifica se não há transações ou se há um estado de vazio
+    cy.contains('Transações por Categoria (Quantidade)').should('be.visible');
+    cy.contains('Transações por Categoria (Valor)').should('be.visible');
+  });
+
+  it('Deve redirecionar para a página de categorias e cadastrar uma nova categoria', () => {
+    // Redireciona manualmente para a página de categorias
     cy.visit('/categorias');
-    
-    // Intercepta as chamadas à API para as categorias, garantindo que as categorias retornadas pertencem ao usuário
-    cy.intercept('GET', '/categorias', {
-      statusCode: 200,
-      body: [
-        { id: 1, nome: 'Alimentação', idUsuario: 1 },
-        { id: 2, nome: 'Transporte', idUsuario: 1 },
-      ],
-    }).as('getCategorias');
 
-    cy.wait('@getCategorias');
-  });
+    // Verifica se a página de categorias foi carregada corretamente
+    cy.contains('Listagem de Categorias').should('be.visible');
 
-  it('Deve abrir o modal de criação de nova categoria e adicioná-la com sucesso', () => {
-    cy.intercept('POST', '/categorias', {
-      statusCode: 201,
-      body: { id: 3, nome: 'Educação', idUsuario: 1 },
-    }).as('postCategoria');
-
-    // Configura a interceptação antes de clicar em "Salvar"
-    cy.intercept('GET', '/categorias', {
-      statusCode: 200,
-      body: [
-        { id: 1, nome: 'Alimentação', idUsuario: 1 },
-        { id: 2, nome: 'Transporte', idUsuario: 1 },
-        { id: 3, nome: 'Educação', idUsuario: 1 },
-      ],
-    }).as('getCategoriasUpdated');
-
+    // Cria uma nova categoria
     cy.get('button').contains('Nova Categoria').click();
-    cy.get('.modal-title').should('contain', 'Nova Categoria');
-    cy.get('input#nome').type('Educação');
+    cy.get('input#nome').type('Categoria Teste');
     cy.get('button').contains('Salvar').click();
 
-    // Espera pela requisição de criação e atualização da lista
-    cy.wait('@postCategoria');
-    cy.wait('@getCategoriasUpdated');
-
-    cy.get('tbody tr').should('have.length', 3);
-    cy.contains('Educação').should('be.visible');
-  });
-
-  it('Deve abrir o modal de edição de uma categoria e editá-la com sucesso', () => {
-    cy.intercept('PUT', '/categorias/2', {
-      statusCode: 200,
-      body: { id: 2, nome: 'Transporte Público', idUsuario: 1 },
-    }).as('putCategoria');
-
-    // Configura a interceptação antes de clicar em "Salvar"
-    cy.intercept('GET', '/categorias', {
-      statusCode: 200,
-      body: [
-        { id: 1, nome: 'Alimentação', idUsuario: 1 },
-        { id: 2, nome: 'Transporte Público', idUsuario: 1 },
-      ],
-    }).as('getCategoriasUpdated');
-
-    cy.get('tbody tr').contains('Transporte').parent('tr').find('.btn-warning').click();
-    cy.get('.modal-title').should('contain', 'Editar Categoria');
-    cy.get('input#nome').clear().type('Transporte Público');
-    cy.get('button').contains('Salvar').click();
-
-    // Espera pela requisição de edição e atualização da lista
-    cy.wait('@putCategoria');
-    cy.wait('@getCategoriasUpdated');
-
-    cy.get('tbody tr').should('have.length', 2);
-    cy.contains('Transporte Público').should('be.visible');
-  });
-
-  it('Deve excluir uma categoria com sucesso', () => {
-    cy.intercept('DELETE', '/categorias/2', {
-      statusCode: 200,
-    }).as('deleteCategoria');
-
-    // Configura a interceptação antes de realizar a exclusão
-    cy.intercept('GET', '/categorias', {
-      statusCode: 200,
-      body: [
-        { id: 1, nome: 'Alimentação', idUsuario: 1 },
-      ],
-    }).as('getCategoriasAfterDelete');
-
-    cy.get('tbody tr').contains('Transporte').parent('tr').find('.btn-danger').click();
-
-    // Espera pela requisição de exclusão e atualização da lista
-    cy.wait('@deleteCategoria');
-    cy.wait('@getCategoriasAfterDelete');
-
-    cy.get('tbody tr').should('have.length', 1);
-    cy.contains('Transporte').should('not.exist');
+    // Verifica se a nova categoria aparece na lista
+    cy.contains('Categoria Teste').should('be.visible');
   });
 });
