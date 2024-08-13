@@ -46,13 +46,23 @@ export default function Dashboard() {
     receitas: [],
     despesas: [],
   });
-  const [quantidadeTransacoesData, setQuantidadeTransacoesData] = useState([]);
-  const [valorTransacoesData, setValorTransacoesData] = useState([]);
+  const [quantidadeTransacoesData, setQuantidadeTransacoesData] = useState<
+    TransacaoQuantidade[]
+  >([]);
+  const [valorTransacoesData, setValorTransacoesData] = useState<
+    TransacaoValor[]
+  >([]);
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
 
-  const prevReceitasDespesasMensais = useRef([]);
-  const prevQuantidadeTransacoesData = useRef([]);
-  const prevValorTransacoesData = useRef([]);
+  const prevReceitasDespesasMensais = useRef<{
+    receitas: number[];
+    despesas: number[];
+  }>({
+    receitas: [],
+    despesas: [],
+  });
+  const prevQuantidadeTransacoesData = useRef<TransacaoQuantidade[]>([]);
+  const prevValorTransacoesData = useRef<TransacaoValor[]>([]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -66,9 +76,15 @@ export default function Dashboard() {
         api.get("/transacoes/valor-total-transacoes-categoria"),
       ]);
 
-      const newReceitasDespesasMensais = receitasDespesasResponse.data;
-      const newQuantidadeTransacoesData = quantidadeTransacoesResponse.data;
-      const newValorTransacoesData = valorTransacoesResponse.data;
+      const newReceitasDespesasMensais = receitasDespesasResponse.data || {};
+      const newQuantidadeTransacoesData = Array.isArray(
+        quantidadeTransacoesResponse.data,
+      )
+        ? quantidadeTransacoesResponse.data
+        : [];
+      const newValorTransacoesData = Array.isArray(valorTransacoesResponse.data)
+        ? valorTransacoesResponse.data
+        : [];
 
       // Comparar os dados novos com os antigos
       if (

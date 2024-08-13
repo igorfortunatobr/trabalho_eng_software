@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import api from "../../services/api";
+import api, { IError } from "../../services/api";
 import "./Cadastro.css";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import IsDesktop from "../../utils/isDesktop";
@@ -42,7 +42,7 @@ export default function Cadastro() {
     } catch (error) {
       setError({
         show: true,
-        message: "Ocorreu um erro ao registrar. Tente novamente.",
+        message: error as string,
       });
     }
   }
@@ -110,7 +110,11 @@ export default function Cadastro() {
 
   const presentation = () => (
     <Container>
-      <img src="./logo-cadastro.png" alt="JUBA Logo" className="my-5 pt-5 w-50" />
+      <img
+        src="./logo-cadastro.png"
+        alt="JUBA Logo"
+        className="my-5 pt-5 w-50"
+      />
       <h2 className="impact-text text-tam">
         Assuma o controle de suas finanças de forma definitiva!
       </h2>
