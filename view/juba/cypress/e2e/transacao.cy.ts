@@ -3,6 +3,11 @@ describe('TransacaoCRUD', () => {
     beforeEach(() => {
         cy.verificaRegistro();
         cy.realizaLogin();
+        
+        const categorias = ['Categoria 1', 'Categoria 2', 'Categoria 3', 'Categoria 4', 'Categoria 5'];
+        categorias.forEach(categoria => {
+            cy.cadastraCategorias(categoria);
+        });
 
         cy.visit('/transacoes');
     });
