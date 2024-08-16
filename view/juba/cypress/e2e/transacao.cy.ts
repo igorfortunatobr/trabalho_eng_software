@@ -186,20 +186,6 @@ describe('TransacaoCRUD', () => {
         cy.contains('Transação Teste EDITADA').should('be.visible');
     });
 
-    it('Deve excluir uma transação já existente', () => {
-        // Verifica se a página de categorias foi carregada corretamente
-        cy.contains('Transação Teste EDITADA').should('be.visible');
-
-        cy.contains('Transação Teste 1').parent('tr').find('.btn-danger').click();
-        cy.contains('Transação Teste 2').parent('tr').find('.btn-danger').click();
-        cy.contains('Transação Teste EDITADA').parent('tr').find('.btn-danger').click();
-
-        // Verifica se a categoria editada aparece na lista
-        cy.contains('Transação Teste 1').should('not.exist');
-        cy.contains('Transação Teste 2').should('not.exist');
-        cy.contains('Transação Teste EDITADA').should('not.exist');
-    });
-
     it('Deve impedir inserção de transação sem categoria', () => {
 
         cy.contains('Listagem de Transações').should('be.visible');
@@ -209,8 +195,7 @@ describe('TransacaoCRUD', () => {
 
         // Tentar salvar sem adicionar categoria
         cy.get('button').contains('Salvar').click();
-        cy.wait(10);
-        cy.contains('Adicione ao menos uma categoria').should('be.visible');
+        cy.contains('Adicione ao menos uma categoria');
     });
 
     it('Deve impedir inserção de transação sem descrição', () => {
@@ -219,7 +204,7 @@ describe('TransacaoCRUD', () => {
         cy.get('button').contains('Nova Transação').click();
         cy.get('input#despesa').check();
         
-        // Adicionar uma categoria
+         // Adicionar a primeira categoria
         let firstValue = '';
         cy.get('select#novaCategoria').then($select => {
             // Encontra todas as opções que não têm o valor vazio
@@ -235,13 +220,49 @@ describe('TransacaoCRUD', () => {
         });
 
         cy.get('input#novaCategoria').type('11.00');
-        cy.wait(10);
+        cy.get('button').contains('Adicionar Categoria').click();
+
+        // Adicionar a segunda categoria, diferente da primeira
+        cy.get('select#novaCategoria').then($select => {
+            // Encontra todas as opções que não têm o valor vazio
+            const validOptions = $select.find('option').filter((index, option) => {
+                return (option as HTMLOptionElement).value !== '' && (option as HTMLOptionElement).value !== firstValue;
+            });
+
+            // Seleciona a segunda opção válida, diferente da primeira
+            if (validOptions.length > 1) {
+                cy.wrap($select).invoke('val').then(firstValue => {
+                    const secondValue = validOptions.filter((index, option) => {
+                        return (option as HTMLOptionElement).value !== firstValue;
+                    }).eq(0).val();
+                    if (secondValue) {
+                        cy.wrap($select).select(secondValue as string);
+                    }
+                });
+            }
+        });
+
+        cy.get('input#novaCategoria').type('12.00');
         cy.get('button').contains('Adicionar Categoria').click();
 
         // Tentar salvar sem descrição
         cy.get('button').contains('Salvar').click();
         cy.wait(10);
         cy.contains('Descrição é obrigatória').should('be.visible');
+    });
+
+    it('Deve excluir uma transação já existente', () => {
+        // Verifica se a página de categorias foi carregada corretamente
+        cy.contains('Transação Teste EDITADA').should('be.visible');
+
+        cy.contains('Transação Teste 1').parent('tr').find('.btn-danger').click();
+        cy.contains('Transação Teste 2').parent('tr').find('.btn-danger').click();
+        cy.contains('Transação Teste EDITADA').parent('tr').find('.btn-danger').click();
+
+        // Verifica se a categoria editada aparece na lista
+        cy.contains('Transação Teste 1').should('not.exist');
+        cy.contains('Transação Teste 2').should('not.exist');
+        cy.contains('Transação Teste EDITADA').should('not.exist');
     });
 
     // it('Deve verificar os totalizadores após inserir uma transação', () => {
