@@ -250,6 +250,8 @@ describe('TransacaoCRUD', () => {
         let initialDespesas = 0;
         let initialSaldo = 0;
 
+        cy.wait(1000);
+
         cy.get('.card-title').contains('Total Receitas').parent().find('.card-text').invoke('text').then((text) => {
             initialReceitas = parseFloat(text.replace('R$', '').replace('.', '').replace(',', '.').trim());
         });
