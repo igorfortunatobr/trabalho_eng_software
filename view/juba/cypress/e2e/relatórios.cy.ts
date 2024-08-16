@@ -4,7 +4,160 @@ describe('Relatórios', () => {
   beforeEach(() => {
 
     cy.verificaRegistro();
-    cy.realizaLogin().then(() => {
+    cy.realizaLogin()
+    
+    // Visitar a página de relatórios
+    cy.visit('/relatorios');
+
+    cy.intercept('POST', '/relatorio?tipo=*').as('postRelatorio');
+
+    cy.intercept('GET', '/categorias/all').as('getCategorias');
+  });
+
+  it('Testar relatório de relatório de transações sem dados', () => {
+
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+    });
+
+    // Verifica se as categorias foram carregadas
+    cy.get('#tipoRelatorio').should('have.value', 'transacoes');
+
+    // Seleciona o tipo de relatório "Transação por Categoria"
+    cy.get('#tipoRelatorio').select('Transação por Categoria');
+
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 100)
+
+    // Subtrai 7 dias da data atual
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() + 7);
+
+    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+
+    // Clica no botão de gerar relatório
+    cy.get('button').contains('Gerar Relatório').click();
+
+    cy.contains("Nenhum registro identificado");
+  });
+
+  it('Testar relatório de relatório de transações sem filtro de categoria', () => {
+
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+    });
+
+    // Verifica se as categorias foram carregadas
+    cy.get('#tipoRelatorio').should('have.value', 'transacoes');
+
+    // Seleciona o tipo de relatório "Transação por Categoria"
+    cy.get('#tipoRelatorio').select('Transação por Categoria');
+
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 100)
+
+    // Subtrai 7 dias da data atual
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() + 7);
+
+    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+
+    // Clica no botão de gerar relatório
+    cy.get('button').contains('Gerar Relatório').click();
+
+    cy.contains("Preencha uma categoria.").should('be.visible');
+  });
+
+  it('Testar relatório de relatório de despesas sem dados', () => {
+
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+    });
+
+    // Verifica se o tipo de transação "Despesas" está selecionado por padrão
+    cy.get('#tipoRelatorio').select('Transações');
+    cy.get('#despesas').should('be.checked');
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 100)
+
+    // Subtrai 7 dias da data atual
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() + 7);
+
+    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+
+    // Clica no botão de gerar relatório
+    cy.get('button').contains('Gerar Relatório').click();
+
+    // Verifica se a requisição de geração de relatório foi feita corretamente
+    cy.wait('@postRelatorio').its('request.body').should((body) => {
+      expect(body).to.have.property('tipoTransacao', '1');
+    });
+
+    cy.contains("Nenhum registro identificado").should('be.visible');;
+  });
+
+  it('Testar relatório de relatório de receitas sem dados', () => {
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+    });
+
+    // Seleciona o tipo de transação "Receitas"
+    cy.get('#tipoRelatorio').select('Transações');
+    cy.get('#receitas').check();
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 100)
+
+    // Subtrai 7 dias da data atual
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() + 7);
+
+    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+
+    // Clica no botão de gerar relatório
+    cy.get('button').contains('Gerar Relatório').click();
+
+    // Verifica se a requisição de geração de relatório foi feita corretamente
+    cy.wait('@postRelatorio').its('request.body').should((body) => {
+      expect(body).to.have.property('tipoTransacao', '2');
+    });
+
+    cy.contains("Nenhum registro identificado").should('be.visible');;
+  });
+
+  it('Testar relatório de transações sem dados', () => {
+    // Configurar um stub para o window.open
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+    });
+
+    // Selecionar tipo de relatório e gerar relatório
+    cy.get('#tipoRelatorio').select('Transações');
+
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 100)
+
+    // Subtrai 7 dias da data atual
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() + 7);
+
+    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+        
+    cy.get('button').contains('Gerar Relatório').click();
+
+    // Verifica se a requisição de geração de relatório foi feita corretamente
+    cy.wait('@postRelatorio').its('response.statusCode').should('eq', 200);
+
+    cy.contains("Nenhum registro identificado").should('be.visible');;
+  });
+
+  it('Cadastrar categorias', () => {
+    async function cadastrarCategorias() {
       cy.cadastraCategorias('Alimentação - ' + (new Date()).toISOString()).then(() => {
       cy.get('@categoriaData').then((dados: any) => {
         categoriaArray.push(dados); // Adiciona o ID da categoria ao array
@@ -16,8 +169,15 @@ describe('Relatórios', () => {
           categoriaArray.push(dados); // Adiciona o ID da categoria ao array
         });
       });
-    }).then(() => {
-      const transacaoData1 = {
+    }
+
+    cadastrarCategorias().then(() => {
+      cy.visit('/relatorios');
+    })
+  })
+
+  it('Cadastrar Transações', () => {
+    const transacaoData1 = {
         "transacao": {
             "data": "2024-08-15",
             "valor": 32,
@@ -58,15 +218,7 @@ describe('Relatórios', () => {
       }
 
       cy.cadastraTransacao(transacaoData2);
-    }).then(() => {
-      // Visitar a página de relatórios
-      cy.visit('/relatorios');
-    })
-
-    cy.intercept('POST', '/relatorio?tipo=*').as('postRelatorio');
-
-    cy.intercept('GET', '/categorias/all').as('getCategorias');
-  });
+  })
 
   it('Deve carregar a tela de relatórios com categorias e permitir a geração de relatório de transações', () => {
 
@@ -101,11 +253,6 @@ describe('Relatórios', () => {
     });
 
     cy.get('@windowOpen').should('be.calledWithMatch', /blob:/);
-
-    /*cy.get('@postRelatorio').then((interception) => {
-      // Verifica se o download do PDF foi acionado
-      expect(interception.response.body).to.equal('Relatório PDF gerado com sucesso');
-    });*/
   });
 
   it('Deve permitir a geração de relatório de despesas', () => {
@@ -189,8 +336,5 @@ describe('Relatórios', () => {
     cy.wait('@postRelatorio').its('response.statusCode').should('eq', 200);
 
     cy.get('@windowOpen').should('be.calledWithMatch', /blob:/);
-
-    // Verifica se a nova aba foi aberta
-    //cy.get('@windowOpen').should('be.called');
   });
 });

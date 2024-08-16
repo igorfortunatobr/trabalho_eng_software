@@ -57,11 +57,11 @@ export default function Relatorios() {
 
       downloadPdf(response.data || "");
     } catch (error) {
-      setAlert({
+      /*setAlert({
         show: true,
         message: error as string,
         type: "danger",
-      });
+      });*/
       console.error("Erro ao gerar relatório ", error);
     }
   };
@@ -128,6 +128,7 @@ export default function Relatorios() {
               className="form-control"
               value={idCategoria}
               onChange={e => setIdCategoria(e.target.value)}
+              required
             >
               <option value="">Selecione uma categoria</option>
               {categorias.map(categoria => (

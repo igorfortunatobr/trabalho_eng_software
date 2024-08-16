@@ -80,4 +80,45 @@ describe('Fluxo Completo: Cadastro de Categoria', () => {
     cy.contains('Categoria Teste EDITADA').should('not.exist');
     cy.contains('Categoria excluída com sucesso');
   });
+
+  let categoria: any;
+
+  it('Cadastrar categorias', () => {
+    cy.cadastraCategorias('Teste exclusão - ' + (new Date()).toISOString()).then(() => {
+    cy.get('@categoriaData').then((dados: any) => {
+      categoria = dados; // Adiciona o ID da categoria ao array
+      });
+    });
+  });
+
+  it('Cadastrar Transações', () => {
+    const transacaoData1 = {
+        "transacao": {
+            "data": "2024-08-15",
+            "valor": 32,
+            "tipo": "1",
+            "descricao": "Transação teste 1"
+        },
+        "categorias": [
+            {
+                "idCategoria": `${categoria.id as string}`,
+                "valor": 12
+            }
+        ]
+      }
+    cy.cadastraTransacao(transacaoData1);
+  })
+
+  it('Bloquear exclusão de categoria com alguma transação vinculada', () => {
+    cy.visit("/categorias")
+
+    // Verifica se a página de categorias foi carregada corretamente
+    cy.contains(categoria.nome).should('be.visible');
+
+    cy.contains(categoria.nome).parent('tr').find('.btn-danger').click();
+
+    // Verifica se a categoria aparece na lista
+    cy.contains(categoria.nome).should('exist');
+    cy.contains('Categoria excluída com sucesso').should('not.exist');;
+  })
 });
