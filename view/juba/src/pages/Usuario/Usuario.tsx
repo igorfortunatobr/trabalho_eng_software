@@ -72,6 +72,14 @@ export default function Usuario() {
       });
       return;
     }
+    if (password.length === 0) {
+      setAlert({
+        show: true,
+        message: "Senha não pode ser vazia",
+        type: "danger",
+      });
+      return;
+    }
     try {
       await api.put(`/usuarios/password`, { senha: password });
       setAlert({

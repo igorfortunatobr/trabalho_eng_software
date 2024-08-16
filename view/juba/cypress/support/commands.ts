@@ -17,7 +17,7 @@ Cypress.Commands.add('verificaRegistro', () => {
     url: `${Cypress.env('backendUrl')}/auth/login`,
     failOnStatusCode: false, // Não falha se o status for diferente de 2xx
     body: {
-      email: 'novo.usuario@example.com',
+      email: 'novo.usuario@example3.com',
       senha: 'senha123',
     }
   }).then((response) => {
@@ -25,7 +25,7 @@ Cypress.Commands.add('verificaRegistro', () => {
       // Se o login falhar com 401, o usuário não existe, então o registramos
       cy.request('POST', `${Cypress.env('backendUrl')}/usuarios/register`, {
         nome: 'Novo Usuário',
-        email: 'novo.usuario@example.com',
+        email: 'novo.usuario@example3.com',
         senha: 'senha123'
       }).then((registerResponse) => {
         expect(registerResponse.status).to.eq(201); // Verifica se o cadastro foi bem-sucedido
@@ -35,9 +35,9 @@ Cypress.Commands.add('verificaRegistro', () => {
 });
 
 Cypress.Commands.add('realizaLogin', () => {
-  cy.session('novo.usuario@example.com', () => {
+  cy.session('novo.usuario@example3.com', () => {
     cy.request('POST', `${Cypress.env('backendUrl')}/auth/login`, {
-      email: 'novo.usuario@example.com',
+      email: 'novo.usuario@example3.com',
       senha: 'senha123'
     }).then((response) => {
       const token = response.body.token;
