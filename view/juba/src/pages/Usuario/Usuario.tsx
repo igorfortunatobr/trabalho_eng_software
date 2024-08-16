@@ -245,7 +245,7 @@ export default function Usuario() {
                             setConfirmPassword("");
                           }}
                         >
-                          Aterar senha
+                          Alterar senha
                         </Button>
                       </>
                     )}

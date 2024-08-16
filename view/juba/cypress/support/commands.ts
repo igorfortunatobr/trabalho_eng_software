@@ -6,6 +6,7 @@ declare global {
       realizaLogin(): Chainable<void>
       verificaRegistro(): Chainable<void>
       cadastraCategorias(nomeCategoria: string): Chainable<void>
+      cadastraTransacao(transacaoData : any): Chainable<void>
     }
   }
 }
@@ -59,6 +60,26 @@ Cypress.Commands.add('cadastraCategorias', (nomeCategoria) => {
           nome: nomeCategoria,
         }
       }).then((response) => {
+        cy.wrap(response.body).as('categoriaData');
+        expect(response.status).to.eq(201); // Verifica se o cadastro foi bem-sucedido
+      });
+    } else {
+      throw new Error('Token não encontrado no localStorage');
+    }
+});
+
+Cypress.Commands.add('cadastraTransacao', (transacaoData) => {
+    const token = window.localStorage.getItem('token');
+    if (token) {
+      cy.request({
+        method: 'POST',
+        url: `${Cypress.env('backendUrl')}/transacoes`,
+        headers: {
+          Authorization: `${token}`, // Adiciona o token no cabeçalho
+        },
+        body: transacaoData
+      }).then((response) => {
+        cy.wrap(response.body).as('transacaoData');
         expect(response.status).to.eq(201); // Verifica se o cadastro foi bem-sucedido
       });
     } else {
