@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import { downloadPdf } from "../../utils/downloadPDF";
 import Template from "../../components/Template/Template";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
 interface Categoria {
   id: number;
@@ -14,6 +15,7 @@ export default function Relatorios() {
     return today.toISOString().split("T")[0];
   };
 
+  const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const [tipoRelatorio, setTipoRelatorio] = useState<string>("transacoes");
   const [dataInicio, setDataInicio] = useState<string>(getCurrentDate());
   const [dataFim, setDataFim] = useState<string>(getCurrentDate());
@@ -25,7 +27,7 @@ export default function Relatorios() {
     // Carregar categorias ao montar o componente
     const loadCategorias = async () => {
       try {
-        const response = await api.get("/categorias");
+        const response = await api.get("/categorias/all");
         setCategorias(response.data);
       } catch (error) {
         console.error("Erro ao carregar categorias", error);
@@ -52,15 +54,27 @@ export default function Relatorios() {
         `/relatorio?tipo=${tipoRelatorio}`,
         payload,
       );
+
       downloadPdf(response.data || "");
     } catch (error) {
-      console.error("Erro ao gerar relatório", error);
+      setAlert({
+        show: true,
+        message: error as string,
+        type: "danger",
+      });
+      console.error("Erro ao gerar relatório ", error);
     }
   };
 
   return (
     <Template>
       <div className="container mt-5">
+        <CustomAlert
+          show={alert.show}
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert({ show: false, message: "", type: "" })}
+        />
         <h2>Relatórios</h2>
         <div className="mb-3">
           <label htmlFor="tipoRelatorio" className="form-label">
@@ -165,4 +179,7 @@ export default function Relatorios() {
       </div>
     </Template>
   );
+}
+function setAlert(arg0: { show: boolean; message: string; type: string }) {
+  throw new Error("Function not implemented.");
 }
