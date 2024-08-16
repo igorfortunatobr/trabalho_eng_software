@@ -31,4 +31,15 @@ describe('Teste de perfil do usuário', () => {
     cy.contains("Senha atualizada com sucesso").should('be.visible');
   });
 
+  it('Deve verificar se as senhas são iguais', () => {
+    cy.contains("Alterar senha").click();
+
+    cy.get('input#formPassword[name="password"]').clear().type('senha123');
+    cy.get('input#formPassword[name="confirmPassword"]').clear().type('123senha');
+
+    cy.contains("Salvar").click();
+
+    cy.contains("As senhas não coincidem").should('be.visible');
+  });
+
 });
