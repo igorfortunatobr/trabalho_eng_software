@@ -250,6 +250,8 @@ describe('TransacaoCRUD', () => {
         let initialDespesas = 0;
         let initialSaldo = 0;
 
+        cy.wait(1000);
+
         cy.get('.card-title').contains('Total Receitas').parent().find('.card-text').invoke('text').then((text) => {
             initialReceitas = parseFloat(text.replace('R$', '').replace('.', '').replace(',', '.').trim());
         });
@@ -264,7 +266,7 @@ describe('TransacaoCRUD', () => {
 
         // Inicia a inserção da nova transação
         cy.get('button').contains('Nova Transação').click();
-        cy.get('input#descricao').type('Transação Teste 2');
+        cy.get('input#descricao').type('Transação Teste 5');
         cy.get('input#receita').check();
         
         // Adicionar a primeira categoria
@@ -302,4 +304,42 @@ describe('TransacaoCRUD', () => {
             expect(finalSaldo).to.equal(expectedSaldo);
         });
     });
+
+    it('Deve considerar a data atual, caso não preencha a data', () => {
+        let descTransacao = 'TRANSAÇÃO TESTE ' + (new Date()).toISOString()
+        cy.get('button').contains('Nova Transação').click();
+        cy.get('input#descricao').type(descTransacao);
+        cy.get('input#receita').check();
+
+        let firstValue = '';
+
+        cy.get('select#novaCategoria').then($select => {
+            const validOptions = $select.find('option').filter((index, option) => {
+                return (option as HTMLOptionElement).value !== '';
+            });
+
+            if (validOptions.length > 0) {
+                firstValue = (validOptions[0] as HTMLOptionElement).value;
+                cy.wrap($select).select(firstValue);
+            }
+        });
+
+        const newTransactionValue = 10.00;
+
+        cy.get('input#novaCategoria').type(newTransactionValue.toString());
+        cy.get('button').contains('Adicionar Categoria').click();
+
+        cy.get('button').contains('Salvar').click();
+
+        // Obter e formatar a data atual para DD/MM/YYYY
+        const currentDate = new Date();
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+        const year = currentDate.getFullYear();
+        const formattedCurrentDate = `${day}/${month}/${year}`;
+
+        cy.contains(descTransacao).parent('tr').within(() => {
+            cy.get('td').contains(formattedCurrentDate);
+        });
+    })
 });
