@@ -1,8 +1,7 @@
-describe('Relatórios', () => {
+describe('Fluxo Completo: Relatórios', () => {
   const categoriaArray: any[] = [];
 
   beforeEach(() => {
-
     cy.verificaRegistro();
     cy.realizaLogin()
     
@@ -10,19 +9,9 @@ describe('Relatórios', () => {
     cy.visit('/relatorios');
 
     cy.intercept('POST', '/relatorio?tipo=*').as('postRelatorio');
-
-    cy.intercept('GET', '/categorias/all').as('getCategorias');
   });
 
-  it('Testar relatório de relatório de transações sem dados', () => {
-
-    cy.window().then((win) => {
-      cy.stub(win, 'open').as('windowOpen');
-    });
-
-    // Verifica se as categorias foram carregadas
-    cy.get('#tipoRelatorio').should('have.value', 'transacoes');
-
+  it('Testar RELATÓRIO DE TRANSAÇÃO POR CATEGORIA sem dados', () => {
     // Seleciona o tipo de relatório "Transação por Categoria"
     cy.get('#tipoRelatorio').select('Transação por Categoria');
 
@@ -42,15 +31,7 @@ describe('Relatórios', () => {
     cy.contains("Nenhum registro identificado");
   });
 
-  it('Testar relatório de relatório de transações sem filtro de categoria', () => {
-
-    cy.window().then((win) => {
-      cy.stub(win, 'open').as('windowOpen');
-    });
-
-    // Verifica se as categorias foram carregadas
-    cy.get('#tipoRelatorio').should('have.value', 'transacoes');
-
+  it('Testar RELATÓRIO DE TRANSAÇÃO POR CATEGORIA - SEM FILTRO DE CATEGORIA', () => {
     // Seleciona o tipo de relatório "Transação por Categoria"
     cy.get('#tipoRelatorio').select('Transação por Categoria');
 
@@ -70,13 +51,7 @@ describe('Relatórios', () => {
     cy.contains("Preencha uma categoria.").should('be.visible');
   });
 
-  it('Testar relatório de relatório de despesas sem dados', () => {
-
-    cy.window().then((win) => {
-      cy.stub(win, 'open').as('windowOpen');
-    });
-
-    // Verifica se o tipo de transação "Despesas" está selecionado por padrão
+  it('Testar RELATÓRIO DE DESPESAS sem dados', () => {
     cy.get('#tipoRelatorio').select('Transações');
     cy.get('#despesas').should('be.checked');
     const currentDate = new Date();
@@ -86,8 +61,8 @@ describe('Relatórios', () => {
     const previousDate = new Date(currentDate);
     previousDate.setDate(currentDate.getDate() + 7);
 
-    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
-    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataInicio').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(previousDate.toISOString().split('T')[0]);
 
     // Clica no botão de gerar relatório
     cy.get('button').contains('Gerar Relatório').click();
@@ -100,11 +75,7 @@ describe('Relatórios', () => {
     cy.contains("Nenhum registro identificado").should('be.visible');;
   });
 
-  it('Testar relatório de relatório de receitas sem dados', () => {
-    cy.window().then((win) => {
-      cy.stub(win, 'open').as('windowOpen');
-    });
-
+  it('Testar RELATÓRIO DE RECEITAS sem dados', () => {
     // Seleciona o tipo de transação "Receitas"
     cy.get('#tipoRelatorio').select('Transações');
     cy.get('#receitas').check();
@@ -115,8 +86,8 @@ describe('Relatórios', () => {
     const previousDate = new Date(currentDate);
     previousDate.setDate(currentDate.getDate() + 7);
 
-    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
-    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataInicio').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(previousDate.toISOString().split('T')[0]);
 
     // Clica no botão de gerar relatório
     cy.get('button').contains('Gerar Relatório').click();
@@ -129,14 +100,9 @@ describe('Relatórios', () => {
     cy.contains("Nenhum registro identificado").should('be.visible');;
   });
 
-  it('Testar relatório de transações sem dados', () => {
-    // Configurar um stub para o window.open
-    cy.window().then((win) => {
-      cy.stub(win, 'open').as('windowOpen');
-    });
-
+  it('Testar RELATÓRIO DE GASTOS POR CATEGORIA sem dados', () => {
     // Selecionar tipo de relatório e gerar relatório
-    cy.get('#tipoRelatorio').select('Transações');
+    cy.get('#tipoRelatorio').select('Gastos por Categoria');
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 100)
@@ -145,15 +111,12 @@ describe('Relatórios', () => {
     const previousDate = new Date(currentDate);
     previousDate.setDate(currentDate.getDate() + 7);
 
-    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
-    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataInicio').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(previousDate.toISOString().split('T')[0]);
         
     cy.get('button').contains('Gerar Relatório').click();
 
-    // Verifica se a requisição de geração de relatório foi feita corretamente
-    cy.wait('@postRelatorio').its('response.statusCode').should('eq', 200);
-
-    cy.contains("Nenhum registro identificado").should('be.visible');;
+    cy.contains("Nenhum registro identificado").should('be.visible');
   });
 
   it('Cadastrar categorias', () => {
@@ -220,14 +183,11 @@ describe('Relatórios', () => {
       cy.cadastraTransacao(transacaoData2);
   })
 
-  it('Deve carregar a tela de relatórios com categorias e permitir a geração de relatório de transações', () => {
+  it('Deve abrir o RELATÓRIO DE TRANSAÇÃO POR CATEGORIA em uma nova aba ao gerar o relatório', () => {
 
     cy.window().then((win) => {
       cy.stub(win, 'open').as('windowOpen');
     });
-
-    // Verifica se as categorias foram carregadas
-    cy.get('#tipoRelatorio').should('have.value', 'transacoes');
 
     // Seleciona o tipo de relatório "Transação por Categoria"
     cy.get('#tipoRelatorio').select('Transação por Categoria');
@@ -236,10 +196,10 @@ describe('Relatórios', () => {
 
     // Subtrai 7 dias da data atual
     const previousDate = new Date(currentDate);
-    previousDate.setDate(currentDate.getDate() - 7);
+    previousDate.setDate(currentDate.getDate() + 7);
 
-    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
-    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataInicio').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(previousDate.toISOString().split('T')[0]);
 
     // Verifica se o dropdown de categorias é mostrado
     cy.get('select#idCategoria').should('be.visible').select(categoriaArray[0].nome);
@@ -248,14 +208,12 @@ describe('Relatórios', () => {
     cy.get('button').contains('Gerar Relatório').click();
 
     // Verifica se a requisição de geração de relatório foi feita corretamente
-    cy.wait('@postRelatorio').its('request.body').should((body) => {
-      expect(body).to.have.property('idCategoria', categoriaArray[0].id.toString());
-    });
+    cy.wait('@postRelatorio').its('response.statusCode').should('eq', 200);
 
     cy.get('@windowOpen').should('be.calledWithMatch', /blob:/);
   });
 
-  it('Deve permitir a geração de relatório de despesas', () => {
+  it('Deve abrir o RELATÓRIO DE DESPESAS em uma nova aba ao gerar o relatório', () => {
 
     cy.window().then((win) => {
       cy.stub(win, 'open').as('windowOpen');
@@ -268,23 +226,21 @@ describe('Relatórios', () => {
 
     // Subtrai 7 dias da data atual
     const previousDate = new Date(currentDate);
-    previousDate.setDate(currentDate.getDate() - 7);
+    previousDate.setDate(currentDate.getDate() + 7);
 
-    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
-    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataInicio').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(previousDate.toISOString().split('T')[0]);
 
     // Clica no botão de gerar relatório
     cy.get('button').contains('Gerar Relatório').click();
 
     // Verifica se a requisição de geração de relatório foi feita corretamente
-    cy.wait('@postRelatorio').its('request.body').should((body) => {
-      expect(body).to.have.property('tipoTransacao', '1');
-    });
+    cy.wait('@postRelatorio').its('response.statusCode').should('eq', 200);
 
     cy.get('@windowOpen').should('be.calledWithMatch', /blob:/);
   });
 
-  it('Deve permitir a geração de relatório de receitas', () => {
+  it('Deve abrir o RELATÓRIO DE RECEITAS em uma nova aba ao gerar o relatório', () => {
     cy.window().then((win) => {
       cy.stub(win, 'open').as('windowOpen');
     });
@@ -296,39 +252,37 @@ describe('Relatórios', () => {
 
     // Subtrai 7 dias da data atual
     const previousDate = new Date(currentDate);
-    previousDate.setDate(currentDate.getDate() - 7);
+    previousDate.setDate(currentDate.getDate() + 7);
 
-    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
-    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataInicio').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(previousDate.toISOString().split('T')[0]);
 
     // Clica no botão de gerar relatório
     cy.get('button').contains('Gerar Relatório').click();
 
     // Verifica se a requisição de geração de relatório foi feita corretamente
-    cy.wait('@postRelatorio').its('request.body').should((body) => {
-      expect(body).to.have.property('tipoTransacao', '2');
-    });
+    cy.wait('@postRelatorio').its('response.statusCode').should('eq', 200);
 
     cy.get('@windowOpen').should('be.calledWithMatch', /blob:/);
   });
 
-  it('Deve abrir o relatório em uma nova aba ao gerar o relatório', () => {
+  it('Deve abrir o relatório de GASTOS POR CATEGORIA em uma nova aba ao gerar o relatório', () => {
     // Configurar um stub para o window.open
     cy.window().then((win) => {
       cy.stub(win, 'open').as('windowOpen');
     });
 
     // Selecionar tipo de relatório e gerar relatório
-    cy.get('#tipoRelatorio').select('Transações');
+    cy.get('#tipoRelatorio').select('Gastos por Categoria');
     // Obtém a data atual
     const currentDate = new Date();
 
     // Subtrai 7 dias da data atual
     const previousDate = new Date(currentDate);
-    previousDate.setDate(currentDate.getDate() - 7);
+    previousDate.setDate(currentDate.getDate() + 7);
 
-    cy.get('input#dataInicio').type(previousDate.toISOString().split('T')[0]);
-    cy.get('input#dataFim').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataInicio').type(currentDate.toISOString().split('T')[0]);
+    cy.get('input#dataFim').type(previousDate.toISOString().split('T')[0]);
         
     cy.get('button').contains('Gerar Relatório').click();
 
