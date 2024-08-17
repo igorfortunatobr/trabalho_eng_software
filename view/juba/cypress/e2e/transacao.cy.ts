@@ -1,5 +1,3 @@
-import { wait } from "@testing-library/user-event/dist/utils";
-
 describe('TransacaoCRUD', () => {
   
     beforeEach(() => {
