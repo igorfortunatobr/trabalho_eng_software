@@ -73,7 +73,7 @@ describe('Tela de Dashboard', () => {
       cy.wrap($canvas).scrollIntoView().should('be.visible');
     });
     
-    // Verifica se os gráficos de pizza contêm os textos das categorias
+    // Verifica se os gráficos estão visíveis
     cy.get('canvas').should('have.length', 3).and('be.visible');
   });
 
