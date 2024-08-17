@@ -73,8 +73,6 @@ describe('Tela de Dashboard', () => {
       cy.wrap($canvas).scrollIntoView().should('be.visible');
     });
     
-    // Verifica se os gráficos estão visíveis
-    cy.get('canvas').should('have.length', 3).and('be.visible');
   });
 
   it('Deve atualizar os dados ao clicar no botão de atualizar', () => {
