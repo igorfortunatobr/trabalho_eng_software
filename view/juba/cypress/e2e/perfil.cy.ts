@@ -29,7 +29,7 @@ describe('Teste de perfil do usuário', () => {
 
     cy.contains("Salvar").click();
 
-    cy.contains("Dados atualizados com sucesso").should("not.be.visible");
+    cy.contains("Nome não pode ser vazio").should('be.visible');
   });
 
   it('Deve editar a senha.', () => {
